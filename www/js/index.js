@@ -28,6 +28,17 @@ var app = {
     // 'pause', 'resume', etc.
     onDeviceReady: function() {
         this.receivedEvent('deviceready');
+        // on se connecte sur le port 28400 (notre serveur node) quand le device est pret
+        var socket = io.connect('http://localhost:28400');
+
+        // actions à réaliser à la connexion avec le serveur : 
+        socket.on('connect', function() {
+            // à la détection de 'text', on alerte le client avec le contenu de ce texte (défini sur le serveur avec socket.emit('text',''))
+            socket.on('text', function(text) {
+              alert(text);
+             });
+           });
+               
     },
 
     // Update DOM on a Received Event
