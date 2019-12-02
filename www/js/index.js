@@ -41,6 +41,10 @@ var app = {
 
         console.log('Received Event: ' + id);
     }
+
+    salut: function () {
+        console.log("je suis vic");
+    }
 };
 
 app.initialize();
