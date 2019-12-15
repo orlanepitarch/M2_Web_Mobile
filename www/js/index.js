@@ -27,31 +27,31 @@ var app = {
     // Bind any cordova events here. Common events are:
     // 'pause', 'resume', etc.
     onDeviceReady: function() {
-        this.receivedEvent('deviceready');
+
         // on se connecte sur le port 28400 (notre serveur node) quand le device est pret
         var socket = io.connect('http://localhost:28400');
+     
+        // Quand on reçoit un message (d'une autre personne), on l'insère dans la page
+        socket.on('message', function(data) {
+            insereMessage(data.message);
+        })
 
-        // actions à réaliser à la connexion avec le serveur : 
-        socket.on('connect', function() {
-            // à la détection de 'text', on alerte le client avec le contenu de ce texte (défini sur le serveur avec socket.emit('text',''))
-            socket.on('text', function(text) {
-              alert(text);
-             });
-           });
-               
+        // détection du click sur le bouton Envoyer signalant qu'un message a été envoyé
+        document.getElementById('envoiMessage').onclick = function() {
+            var message = document.getElementById('message').value;
+            socket.emit('message', message); // Transmet le message aux autres
+            insereMessage(message);
+            document.getElementById('message').value='';
+        };
+            
+        // Ajoute un message dans la page
+        function insereMessage(message) {
+            var p = document.createElement("p");
+            p.innerHTML = message;
+            document.getElementById('zone_chat').appendChild(p);
+        }  
     },
 
-    // Update DOM on a Received Event
-    receivedEvent: function(id) {
-        var parentElement = document.getElementById(id);
-        var listeningElement = parentElement.querySelector('.listening');
-        var receivedElement = parentElement.querySelector('.received');
-
-        listeningElement.setAttribute('style', 'display:none;');
-        receivedElement.setAttribute('style', 'display:block;');
-
-        console.log('Received Event: ' + id);
-    }
 };
 
 app.initialize();
