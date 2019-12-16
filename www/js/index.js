@@ -1,3 +1,4 @@
+import {Damier} from "./damier.js";
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -16,6 +17,8 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
+
 var app = {
     // Application Constructor
     initialize: function() {
@@ -27,7 +30,7 @@ var app = {
     // Bind any cordova events here. Common events are:
     // 'pause', 'resume', etc.
     onDeviceReady: function() {
-        this.receivedEvent('deviceready');
+        //this.receivedEvent('deviceready');
     },
 
     // Update DOM on a Received Event
@@ -40,11 +43,8 @@ var app = {
         receivedElement.setAttribute('style', 'display:block;');
 
         console.log('Received Event: ' + id);
-    }
-
-    salut: function () {
-        console.log("je suis vic");
-    }
+    },
 };
 
 app.initialize();
+
