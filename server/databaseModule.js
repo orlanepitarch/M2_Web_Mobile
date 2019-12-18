@@ -321,3 +321,4 @@ exports.findAPlayerByPseudo = findAPlayerByPseudo;
 exports.findAllPlayers = findAllPlayers;
 exports.updateAPlayerRatingAndFindHimById = updateAPlayerRatingAndFindHimById;
 exports.findGamesByPlayers = findGamesByPlayers;
+exports.findAPasswordForAGivenPlayerById = findAPasswordForAGivenPlayerById;
