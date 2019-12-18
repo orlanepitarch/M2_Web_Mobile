@@ -16,6 +16,7 @@ db.once('open', function() {
  * @property {number} id - the player ID.
  * @property {string} pseudo - the player pseudo.
  * @property {number} rating - the player rating.
+ * @property {string} password - the player encrypted password
  */
 
 /** @type {Player} */
@@ -23,7 +24,8 @@ db.once('open', function() {
 var playerSchema = new mongoose.Schema({
   id: {type:Number, min:0},
   pseudo: {type: String, minlength:3, maxlength: 15},
-  rating: {type:Number, min:0} 
+  rating: {type:Number, min:0}, 
+  password: {type:String}
 });
 
 var Player = mongoose.model('Player', playerSchema);
@@ -195,13 +197,14 @@ Board.find({}, function (err, comms) {
  * @param {number} Pid - an id
  * @param {string} Ppseudo - a pseudo
  * @param {number} Prating - a rating
+ * @param {string} Ppassword - a password
  */
 function addAPlayer(Pid, Ppseudo, Prating){
-    var newPlayer = new Player({ id: Pid, pseudo: Ppseudo, rating:Prating });
+    var newPlayer = new Player({ id: Pid, pseudo: Ppseudo, rating:Prating, password:Ppassword });
     newPlayer.save(function (err) {
         if (err) { throw err; }
         else{
-          console.log(newPlayer.pseudo+" ajouté avec succès !");
+          //console.log(newPlayer.pseudo+" ajouté avec succès !");
         }
     });
 }
@@ -224,7 +227,7 @@ function addAPlayer(Pid, Ppseudo, Prating){
      newGame.save(function (err) {
         if (err) { throw err; }
         else{
-          console.log(newGame.playerWhite.pseudo +" vs "+newGame.playerBlack.pseudo+ " ajouté avec succès");
+          //console.log(newGame.playerWhite.pseudo +" vs "+newGame.playerBlack.pseudo+ " ajouté avec succès");
         }
     });
  }
@@ -269,6 +272,16 @@ function addAPlayer(Pid, Ppseudo, Prating){
         return comms;
     }
   });
+ }
+
+ /**
+  * return the password of a given player (by id)
+  * @param {number} playerId - the player id
+  */
+
+ function findAPasswordForAGivenPlayerById(playerId){
+    var p = findAPlayerById(playerId);
+    return p.password;
  }
 
  /**
