@@ -42,12 +42,14 @@ var app = {
         // détection du click sur le bouton Envoyer signalant qu'un message a été envoyé
         document.getElementById('envoiMessage').onclick = function() {
             var message = document.getElementById('message').value;
-            socket.emit('message', message, socket.id); // Transmet le message aux autres
-            console.log(socket.id)
+            socket.emit('message', message, socket.id); // Transmet le message à son duo (retrouvé par le serveur)
             insereMessage(message);
             document.getElementById('message').value='';
         };
             
+        socket.on("deconnexionAdversaire", function(data) {
+            console.log("adv deco");
+        })
         // Ajoute un message dans la page
         function insereMessage(message) {
             var p = document.createElement("p");
