@@ -123,7 +123,7 @@ function addAPlayer(Pid, Ppseudo, Prating){
      newGame.save(function (err) {
         if (err) { throw err; }
         else{
-          
+
         }
     });
  }
@@ -208,7 +208,7 @@ function addAPlayer(Pid, Ppseudo, Prating){
         return comms;
     }
   });
- } 
+} 
 
 exports.addAPlayer = addAPlayer;
 exports.addAGame = addAGame;
