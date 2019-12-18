@@ -36,10 +36,14 @@ var app = {
             insereMessage(data.message);
         })
 
+        var pseudo = prompt('Quel est votre pseudo ?');
+        socket.emit('nouveau_client', socket.id);
+
         // détection du click sur le bouton Envoyer signalant qu'un message a été envoyé
         document.getElementById('envoiMessage').onclick = function() {
             var message = document.getElementById('message').value;
-            socket.emit('message', message); // Transmet le message aux autres
+            socket.emit('message', message, socket.id); // Transmet le message aux autres
+            console.log(socket.id)
             insereMessage(message);
             document.getElementById('message').value='';
         };
