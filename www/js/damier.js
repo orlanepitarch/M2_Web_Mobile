@@ -16,10 +16,11 @@ class Damier{
             }
         }
     */
-        this.drawSvg();
+        this.drawDamierSvg();
+        this.drawPionSvg();
     }
 
-    drawSvg(){
+    drawDamierSvg(){
         let svg = document.querySelector('#damier');
         let colorVerifier = '#4b170d';
         //contruction damier dynamique
@@ -28,7 +29,7 @@ class Damier{
                 let newx = 50 * i;
                 let newy = 50 * j;
                 let caseSvg = document.createElementNS('http://www.w3.org/2000/svg', 'rect')
-                caseSvg.setAttribute('id', i.toString()+j.toString());
+                caseSvg.setAttribute('id', +'/'+j.toString()+i.toString());
                 caseSvg.setAttributeNS(null, 'width', '50');
                 caseSvg.setAttributeNS(null, 'height', '50');
                 //datermine la couleur d'une case selon
@@ -68,5 +69,37 @@ class Damier{
         }
     }
 
+    drawPionSvg(){
+        let rayon = 18;
+        let svg = document.querySelector('#damier');
+        let colorVerifier = '#672D2E' //#FDDDA7
+        for(let j = 0; j < this.taille; j++){
+            for(let i = 0; i < this.taille; i++){
+                console.log(this.taille-3)
+                //2 premières ligne et 2 dernières lignes remplises
+                if(j==0 || j==1 || j==this.taille-2 || j==this.taille-1){
+
+                    //on calcule les coordonnées
+                    let newcx = 50 * i + 25;
+                    let newcy = 50 * j + 25;
+                    let pionSvg = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                    pionSvg.setAttribute('class', 'pionSvg');
+                    pionSvg.setAttributeNS(null, 'r', rayon.toString());
+                    pionSvg.setAttributeNS(null, 'cx', newcx.toString());
+                    pionSvg.setAttributeNS(null, 'cy', newcy.toString());
+                    if(j==0 || j==1){
+                        pionSvg.setAttributeNS(null, 'fill', '#672D2E');
+                    } else if( j == this.taille-2 || j==this.taille-1){
+                        pionSvg.setAttributeNS(null, 'fill', '#FDDDA7');
+                    }
+                    pionSvg.setAttributeNS(null, 'stroke-width', '2');
+                    pionSvg.setAttributeNS(null, 'stroke', 'black');
+                    svg.appendChild(pionSvg);
+                }
+            }
+        }
+    }
 }
+
+
 
