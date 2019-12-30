@@ -12,67 +12,98 @@
     //let tailleDamier = prompt("Veuillez choisir la taille de votre damier (valeur minimale 6) :")
     new Damier(10);
 
-    function makeDraggable(event){
+    function makeDraggable(event) {
         let damier = event.target;
         damier.addEventListener('mousedown', clickedPion);
         damier.addEventListener('mouseup', releasePion);
-        function clickedPion(event){
+
+        function clickedPion(event) {
             if (event.target.classList.contains('draggable')) {
                 selectedPion = event.target;
                 caseActive = selectedPion.parentNode;
                 caseOptions = calculCaseOptions(getCurrentPosRow(), getCurrentPosCol(), getCurrentStatus(), getCurrentColor());
                 console.log(caseOptions);
-                for(let selectableCase of caseOptions){
-                    let coloredIndicatorOfMoving = document.createElementNS( 'http://www.w3.org/2000/svg', 'circle');
+                for (let selectableCase of caseOptions) {
+                    let coloredIndicatorOfMoving = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
                     coloredIndicatorOfMoving.setAttributeNS(null, 'r', '9');
                     coloredIndicatorOfMoving.setAttributeNS(null, 'fill', '#89DEF3');
-                    coloredIndicatorOfMoving.setAttributeNS(null, 'cx', (getPosX(selectableCase)+25).toString());
-                    coloredIndicatorOfMoving.setAttributeNS(null, 'cy', (getPosY(selectableCase)+25).toString());
+                    coloredIndicatorOfMoving.setAttributeNS(null, 'cx', (getPosX(selectableCase) + 25).toString());
+                    coloredIndicatorOfMoving.setAttributeNS(null, 'cy', (getPosY(selectableCase) + 25).toString());
                     coloredIndicatorOfMoving.setAttribute('class', 'indicator');
                     selectableCase.appendChild(coloredIndicatorOfMoving);
                 }
             }
         }
-        function releasePion(event){
-            for(let selectableCase of caseOptions){
+
+        function releasePion(event) {
+            for (let selectableCase of caseOptions) {
                 selectableCase.removeChild(selectableCase.querySelector('.indicator'));
+                let mouseX = getMousePosition(event).x;
+                let mouseY = getMousePosition(event).y;
+                //si le release s'effectue au dessus d'une case authorisée
+                if((getPosX(selectableCase)<=mouseX && getPosX(selectableCase)+49>=mouseX) && (getPosY(selectableCase)<=mouseY && getPosY(selectableCase)+49>=mouseY)){
+                    let clone = selectedPion.cloneNode();
+                    clone.setAttributeNS(null, 'cx', (getPosX(selectableCase) + 25).toString());
+                    clone.setAttributeNS(null, 'cy', (getPosY(selectableCase) + 25).toString());
+                    selectableCase.setAttribute('class', 'busy '+getCurrentColor());
+                    selectableCase.appendChild(clone);
+                    caseActive.removeChild(selectedPion);
+                    caseActive.setAttribute('class', 'free');
+
+                }
+
+                console.log(mouseX, mouseY);
             }
+
         }
-    }
 
-    //fonction permettant de proposer des cases jouables (tableau de <g></g>) selon
-    // la couleur du pion, son statut (pion ou dame), la position du pion courant cliqué
-    // return caseOptions[]
-    function calculCaseOptions(posRow, posCol, statusPion, colorPion){
-        let caseOpt = [];
-
-        if(statusPion == 'pion'){
-            if(colorPion == 'black'){
-                let caseLeft = document.getElementById((posRow+1)+'/'+(posCol-1));
-                let caseRight = document.getElementById((posRow+1)+'/'+(posCol+1));
-                if (caseLeft!=null && caseLeft.classList.contains('free')){
-                    caseOpt.push(caseLeft);
-                }
-                if (caseRight!=null && caseRight.classList.contains('free') && caseRight!=null){
-                    caseOpt.push(caseRight);
-                }
-
-                return caseOpt;
-            } else if (colorPion == 'white') {
-                let caseLeft = document.getElementById((posRow-1)+'/'+(posCol-1));
-                let caseRight = document.getElementById((posRow-1)+'/'+(posCol+1));
-                if (caseLeft!=null && caseLeft.classList.contains('free')){
-                    caseOpt.push(caseLeft);
-                }
-                if (caseRight!=null && caseRight.classList.contains('free')){
-                    caseOpt.push(caseRight);
-                }
-                return caseOpt;
-            } else {
-                throw Error('Couleur de pion selectionné impossible ! ');
+        //hotfix pour tout screen, correcteur de la position de souris
+        //utile en cas de view box
+        function getMousePosition(event) {
+            let CTM = damier.getScreenCTM();
+            //Si sur mobile
+            if (event.touches) {
+                event = event.touches[0];
             }
+            return {
+                x: (event.clientX - CTM.e) / CTM.a,
+                y: (event.clientY - CTM.f) / CTM.d
+            };
+        }
 
-        }/* else if (statusPion == 'dame'){
+        //fonction permettant de proposer des cases jouables (tableau de <g></g>) selon
+        // la couleur du pion, son statut (pion ou dame), la position du pion courant cliqué
+        // return caseOptions[]
+        function calculCaseOptions(posRow, posCol, statusPion, colorPion) {
+            let caseOpt = [];
+
+            if (statusPion == 'pion') {
+                if (colorPion == 'black') {
+                    let caseLeft = document.getElementById((posRow + 1) + '/' + (posCol - 1));
+                    let caseRight = document.getElementById((posRow + 1) + '/' + (posCol + 1));
+                    if (caseLeft != null && caseLeft.classList.contains('free')) {
+                        caseOpt.push(caseLeft);
+                    }
+                    if (caseRight != null && caseRight.classList.contains('free') && caseRight != null) {
+                        caseOpt.push(caseRight);
+                    }
+
+                    return caseOpt;
+                } else if (colorPion == 'white') {
+                    let caseLeft = document.getElementById((posRow - 1) + '/' + (posCol - 1));
+                    let caseRight = document.getElementById((posRow - 1) + '/' + (posCol + 1));
+                    if (caseLeft != null && caseLeft.classList.contains('free')) {
+                        caseOpt.push(caseLeft);
+                    }
+                    if (caseRight != null && caseRight.classList.contains('free')) {
+                        caseOpt.push(caseRight);
+                    }
+                    return caseOpt;
+                } else {
+                    throw Error('Couleur de pion selectionné impossible ! ');
+                }
+
+            }/* else if (statusPion == 'dame'){
             return caseOpt;
         } else {
             throw Error("Status spécifie incorrect");
@@ -81,29 +112,31 @@
         if(.classList.contains('free')){
 
         }*/
-    }
+        }
 
-    function getPosX(selectedCase) {
-        return parseInt(selectedCase.querySelector('rect').getAttribute('x'));
-    }
+        function getPosX(selectedCase) {
+            return parseInt(selectedCase.querySelector('rect').getAttribute('x'));
+        }
 
-    function getPosY(selectedCase) {
-        return parseInt(selectedCase.querySelector('rect').getAttribute('y'));
-    }
-    function getCurrentPosRow(){
-        return parseInt(caseActive.getAttribute('id').split("/")[0]);
-    }
+        function getPosY(selectedCase) {
+            return parseInt(selectedCase.querySelector('rect').getAttribute('y'));
+        }
 
-    function getCurrentPosCol(){
-        return parseInt(caseActive.getAttribute('id').split("/")[1]);
-    }
+        function getCurrentPosRow() {
+            return parseInt(caseActive.getAttribute('id').split("/")[0]);
+        }
 
-    function getCurrentStatus() {
-        return selectedPion.classList[0];
-    }
+        function getCurrentPosCol() {
+            return parseInt(caseActive.getAttribute('id').split("/")[1]);
+        }
 
-    function  getCurrentColor() {
-        return selectedPion.classList[1];
+        function getCurrentStatus() {
+            return selectedPion.classList[0];
+        }
+
+        function getCurrentColor() {
+            return selectedPion.classList[1];
+        }
     }
 
 /*
@@ -187,15 +220,4 @@
     }
 
 
-    //hotfix pour tout screen, correcteur de la position de souris
-    //utile en cas de view box
-    function getMousePosition(event) {
-        let CTM = mySvg.getScreenCTM();
-        //Si sur mobile
-        if (event.touches) { event = event.touches[0]; }
-        return {
-            x: (event.clientX - CTM.e) / CTM.a,
-            y: (event.clientY - CTM.f) / CTM.d
-        };
-    }
 */
