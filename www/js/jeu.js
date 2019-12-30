@@ -1,17 +1,31 @@
-class Game {
-    constructor(){
+
+//class Game {
+    /*constructor(event){
+        this.event = event;
         this.displayDamier();
-    }
+        makeDraggable();
+    }*/
 
-    displayDamier() {
-        let tailleDamier = prompt("Veuillez choisir la taille de votre damier (valeur minimale 6) :")
-        damier = new Damier(tailleDamier);
-    }
+    let selectedPion, caseActive, caseChoisie;
+    let caseOptions = [];
 
-    function
-    var selectedElement, offset, transform;
+    //let tailleDamier = prompt("Veuillez choisir la taille de votre damier (valeur minimale 6) :")
+    new Damier(10);
 
     function makeDraggable(event){
+        let damier = event.target;
+        damier.addEventListener('mousedown', clickedPion);
+        function clickedPion(event){
+            if (event.target.classList.contains('draggable')) {
+                selectedPion = event.target;
+                caseActive = selectedPion.parentNode;
+                console.log(caseActive);
+            }
+        }
+    }
+
+/*
+    makeDraggable(event){
     var mySvg = event.target;
     //ajout des listeners à l'élément du DOM clické
     mySvg.addEventListener('mousedown', startDrag);
@@ -45,8 +59,9 @@ class Game {
 
     //V3 startDrag prise en compte des svg ne possédant pas de coordonnées x, y
     // prise en compte des transform effectué sur ces svg...
-    //HARD
-    function startDrag(event) {
+    //HARD*/
+    /*
+    startDrag(event) {
         if (event.target.classList.contains('draggable')) {
 
             selectedElement = event.target;
@@ -75,7 +90,7 @@ class Game {
 
     //lorsqu'on à cliqué sur l'élément on commence à déplacer ca position de 0.1 en .1 en suivant
     //la souris
-    function drag(event) {
+    drag(event) {
 
         if(selectedElement) {
             console.log("ici");
@@ -85,7 +100,7 @@ class Game {
         }
     }
 
-    function endDrag(event) {
+    endDrag(event) {
         selectedElement = null;
     }
 
@@ -101,5 +116,4 @@ class Game {
             y: (event.clientY - CTM.f) / CTM.d
         };
     }
-
-}
+*/

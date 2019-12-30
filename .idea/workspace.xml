@@ -1,7 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="63d1725b-a1fc-42e9-82f1-1e7f5ed38709" name="Default Changelist" comment="" />
+    <list default="true" id="5da600a3-12ac-45b3-a8e1-49c671a1719b" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/M2_Web_Mobile.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/M2_Web_Mobile.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/www/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/js/damier.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/js/damier.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/js/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/js/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/www/js/jeu.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/js/jeu.js" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -10,7 +18,33 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="ProjectConfigurationFiles">
+    <option name="files">
+      <list>
+        <option value="$PROJECT_DIR$/.idea/M2_Web_Mobile.iml" />
+        <option value="$PROJECT_DIR$/.idea/vcs.xml" />
+        <option value="$PROJECT_DIR$/.idea/modules.xml" />
+        <option value="$PROJECT_DIR$/.idea/codeStyles/Project.xml" />
+      </list>
+    </option>
+  </component>
+  <component name="ProjectId" id="1Vi8vvVzLbohvXWq9kqVeY4A3WV" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showExcludedFiles" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="AnalyzeApkAction.lastApkPath" value="$PROJECT_DIR$" />
+    <property name="HbShouldOpenHtmlAsHb" value="" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="android.sdk.path" value="/usr/local/android-sdk-linux" />
+    <property name="last_opened_file_path" value="$USER_HOME$/Bureau/BrigMotionProject" />
+    <property name="nodejs_interpreter_path" value="node" />
+    <property name="settings.editor.selected.configurable" value="preferences.lookFeel" />
+  </component>
   <component name="ServiceViewManager">
     <option name="viewStates">
       <list>
@@ -27,6 +61,25 @@
     <configuration />
   </component>
   <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="5da600a3-12ac-45b3-a8e1-49c671a1719b" name="Default Changelist" comment="" />
+      <created>1575280623503</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1575280623503</updated>
+      <workItem from="1575280725365" duration="643000" />
+      <workItem from="1575281381617" duration="972000" />
+      <workItem from="1577724799196" duration="5327000" />
+    </task>
     <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="1" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="446" y="310" width="424" height="484" key="FileChooserDialogImpl" timestamp="1577655635304">
+      <screen x="67" y="27" width="1853" height="1053" />
+    </state>
+    <state x="446" y="310" width="424" height="484" key="FileChooserDialogImpl/67.27.1853.1053@67.27.1853.1053" timestamp="1577655635304" />
   </component>
 </project>

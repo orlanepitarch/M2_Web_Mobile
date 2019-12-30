@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$USER_HOME$/Bureau/BrigMotionProject/.idea/BrigMotionProject.iml" filepath="$USER_HOME$/Bureau/BrigMotionProject/.idea/BrigMotionProject.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/M2_Web_Mobile.iml" filepath="$PROJECT_DIR$/.idea/M2_Web_Mobile.iml" />
     </modules>
   </component>
