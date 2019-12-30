@@ -66,6 +66,8 @@ class Damier{
                 caseSvg.setAttributeNS(null, 'stroke', 'black');
                 caseSvg.setAttributeNS(null, "x", newx.toString());
                 caseSvg.setAttributeNS(null, "y", newy.toString());
+                //aucun pion sur le conteneur à sa créations
+                caseConteneur.setAttribute('class', 'free');
                 caseConteneur.appendChild(caseSvg);
             }
         }
@@ -94,10 +96,10 @@ class Damier{
                             // ainsi que la couleur du pion qui l'occupe
                             // cela permettra une meilleure maniabilité des cases
                             // !!! L'attribut busy (black||white) doit être supprimé lorsque la case n'est plus occupé
-                            pionSvg.setAttribute('class', 'pionSvg black draggable');
+                            pionSvg.setAttribute('class', 'pion black draggable');
                             parental.setAttribute('class', 'busy black');
                         } else {
-                            pionSvg.setAttribute('class', 'pionSvg white draggable');
+                            pionSvg.setAttribute('class', 'pion white draggable');
                             parental.setAttribute('class', 'busy white');
                         }
                         pionSvg.setAttributeNS(null, 'r', rayon.toString());
