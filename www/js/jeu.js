@@ -6,8 +6,9 @@
         makeDraggable();
     }*/
 
-    let selectedPion, caseActive, caseChoisie;
+    let selectedPion, caseActive
     let caseOptions = [];
+    let casePrises = new Map();
 
     //let tailleDamier = prompt("Veuillez choisir la taille de votre damier (valeur minimale 6) :")
     new Damier(10);
@@ -21,40 +22,41 @@
             if (event.target.classList.contains('draggable')) {
                 selectedPion = event.target;
                 caseActive = selectedPion.parentNode;
-                caseOptions = calculCaseOptions(getCurrentPosRow(), getCurrentPosCol(), getCurrentStatus(), getCurrentColor());
-                console.log(caseOptions);
-                for (let selectableCase of caseOptions) {
-                    let coloredIndicatorOfMoving = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-                    coloredIndicatorOfMoving.setAttributeNS(null, 'r', '9');
-                    coloredIndicatorOfMoving.setAttributeNS(null, 'fill', '#89DEF3');
-                    coloredIndicatorOfMoving.setAttributeNS(null, 'cx', (getPosX(selectableCase) + 25).toString());
-                    coloredIndicatorOfMoving.setAttributeNS(null, 'cy', (getPosY(selectableCase) + 25).toString());
-                    coloredIndicatorOfMoving.setAttribute('class', 'indicator');
-                    selectableCase.appendChild(coloredIndicatorOfMoving);
+                caseOptions = calculCaseOptions(getCurrentPosRow(caseActive), getCurrentPosCol(caseActive), getCurrentStatus(), getCurrentColor()).caseOpt;
+                casePrises = calculCaseOptions(getCurrentPosRow(caseActive), getCurrentPosCol(caseActive), getCurrentStatus(), getCurrentColor()).caseTake;
+                //Si la prise de pion adverse est possible, elle est OBLIGATOIRE !
+                if(casePrises.size == 0){
+                    for (let selectableCase of caseOptions) {
+                        let coloredIndicatorOfMoving = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                        coloredIndicatorOfMoving.setAttributeNS(null, 'r', '9');
+                        coloredIndicatorOfMoving.setAttributeNS(null, 'fill', '#89DEF3');
+                        coloredIndicatorOfMoving.setAttributeNS(null, 'cx', (getPosX(selectableCase) + 25).toString());
+                        coloredIndicatorOfMoving.setAttributeNS(null, 'cy', (getPosY(selectableCase) + 25).toString());
+                        coloredIndicatorOfMoving.setAttribute('class', 'indicator');
+                        selectableCase.appendChild(coloredIndicatorOfMoving);
+                    }
+                } else {
+                    for (let [caseSaute, caseDestination] of casePrises) {
+                        let coloredIndicatorOfPrise = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                        coloredIndicatorOfPrise.setAttributeNS(null, 'r', '11');
+                        coloredIndicatorOfPrise.setAttributeNS(null, 'fill', 'red');
+                        coloredIndicatorOfPrise.setAttributeNS(null, 'cx', (getPosX(caseDestination) + 25).toString());
+                        coloredIndicatorOfPrise.setAttributeNS(null, 'cy', (getPosY(caseDestination) + 25).toString());
+                        coloredIndicatorOfPrise.setAttribute('class', 'indicatorPrise');
+                        caseDestination.appendChild(coloredIndicatorOfPrise);
+                    }
                 }
+
             }
         }
 
         function releasePion(event) {
-            for (let selectableCase of caseOptions) {
-                selectableCase.removeChild(selectableCase.querySelector('.indicator'));
-                let mouseX = getMousePosition(event).x;
-                let mouseY = getMousePosition(event).y;
-                //si le release s'effectue au dessus d'une case authorisée
-                if((getPosX(selectableCase)<=mouseX && getPosX(selectableCase)+49>=mouseX) && (getPosY(selectableCase)<=mouseY && getPosY(selectableCase)+49>=mouseY)){
-                    let clone = selectedPion.cloneNode();
-                    clone.setAttributeNS(null, 'cx', (getPosX(selectableCase) + 25).toString());
-                    clone.setAttributeNS(null, 'cy', (getPosY(selectableCase) + 25).toString());
-                    selectableCase.setAttribute('class', 'busy '+getCurrentColor());
-                    selectableCase.appendChild(clone);
-                    caseActive.removeChild(selectedPion);
-                    caseActive.setAttribute('class', 'free');
-
-                }
-
-                console.log(mouseX, mouseY);
+            //prise OBLIGATOIRE
+            if(casePrises.size == 0){
+                moving(caseOptions, event);
+            } else {
+                prise(casePrises, event);
             }
-
         }
 
         //hotfix pour tout screen, correcteur de la position de souris
@@ -76,7 +78,7 @@
         // return caseOptions[]
         function calculCaseOptions(posRow, posCol, statusPion, colorPion) {
             let caseOpt = [];
-
+            let caseTake = new Map();
             if (statusPion == 'pion') {
                 if (colorPion == 'black') {
                     let caseLeft = document.getElementById((posRow + 1) + '/' + (posCol - 1));
@@ -87,8 +89,25 @@
                     if (caseRight != null && caseRight.classList.contains('free') && caseRight != null) {
                         caseOpt.push(caseRight);
                     }
-
-                    return caseOpt;
+                    //Si les cases droites / gauches sont occupés par l'adversaire,
+                    //On vérifie que l'on peut damer le pion
+                    // si la prise est possible on stock la case adversere en clé, la case destination en valeure
+                    if (caseLeft != null && caseLeft.classList.contains('white')){
+                        let casePriseAdvLeft = document.getElementById((posRow+2) + '/' + (posCol-2));
+                        if(casePriseAdvLeft != null && casePriseAdvLeft.classList.contains('free')){
+                            caseTake.set(caseLeft, casePriseAdvLeft);
+                        }
+                    }
+                    if (caseRight!= null && caseRight.classList.contains('white')){
+                        let casePriseAdvRight = document.getElementById((posRow+2) + '/' + (posCol+2));
+                        if(casePriseAdvRight != null && casePriseAdvRight.classList.contains('free')){
+                            caseTake.set(caseRight, casePriseAdvRight);
+                        }
+                    }
+                    return {
+                        caseOpt,
+                        caseTake
+                    }
                 } else if (colorPion == 'white') {
                     let caseLeft = document.getElementById((posRow - 1) + '/' + (posCol - 1));
                     let caseRight = document.getElementById((posRow - 1) + '/' + (posCol + 1));
@@ -98,7 +117,24 @@
                     if (caseRight != null && caseRight.classList.contains('free')) {
                         caseOpt.push(caseRight);
                     }
-                    return caseOpt;
+                    //Si les cases droites / gauches sont occupés par l'adversaire,
+                    //On vérifie que l'on peut damer le pion
+                    if (caseLeft != null && caseLeft.classList.contains('black')){
+                        let casePriseAdvLeft = document.getElementById((posRow-2) + '/' + (posCol-2));
+                        if(casePriseAdvLeft != null && casePriseAdvLeft.classList.contains('free')){
+                            caseTake.set(caseLeft, casePriseAdvLeft);
+                        }
+                    }
+                    if (caseRight != null && caseRight.classList.contains('black')){
+                        let casePriseAdvRight = document.getElementById((posRow-2) + '/' + (posCol+2));
+                        if(casePriseAdvRight != null && casePriseAdvRight.classList.contains('free')){
+                            caseTake.set(caseRight, casePriseAdvRight);
+                        }
+                    }
+                    return {
+                        caseOpt,
+                        caseTake
+                    }
                 } else {
                     throw Error('Couleur de pion selectionné impossible ! ');
                 }
@@ -122,11 +158,11 @@
             return parseInt(selectedCase.querySelector('rect').getAttribute('y'));
         }
 
-        function getCurrentPosRow() {
+        function getCurrentPosRow(caseActive) {
             return parseInt(caseActive.getAttribute('id').split("/")[0]);
         }
 
-        function getCurrentPosCol() {
+        function getCurrentPosCol(caseActive) {
             return parseInt(caseActive.getAttribute('id').split("/")[1]);
         }
 
@@ -136,6 +172,45 @@
 
         function getCurrentColor() {
             return selectedPion.classList[1];
+        }
+
+        function moving(caseOptions, event){
+            let mouseX = getMousePosition(event).x;
+            let mouseY = getMousePosition(event).y;
+            for (let selectableCase of caseOptions) {
+                selectableCase.removeChild(selectableCase.querySelector('.indicator'));
+                //si le release s'effectue au dessus d'une case authorisée
+                if((getPosX(selectableCase)<=mouseX && getPosX(selectableCase)+49>=mouseX) && (getPosY(selectableCase)<=mouseY && getPosY(selectableCase)+49>=mouseY)){
+                    let clone = selectedPion.cloneNode();
+                    clone.setAttributeNS(null, 'cx', (getPosX(selectableCase) + 25).toString());
+                    clone.setAttributeNS(null, 'cy', (getPosY(selectableCase) + 25).toString());
+                    selectableCase.setAttribute('class', 'busy '+getCurrentColor());
+                    selectableCase.appendChild(clone);
+                    caseActive.removeChild(selectedPion);
+                    caseActive.setAttribute('class', 'free');
+                }
+            }
+        }
+
+        function prise(casePrises, event){
+            let mouseX = getMousePosition(event).x;
+            let mouseY = getMousePosition(event).y;
+            for (let [caseSaute, caseDestination] of casePrises){
+                caseDestination.removeChild(caseDestination.querySelector('.indicatorPrise'));
+                if((getPosX(caseDestination)<=mouseX && getPosX(caseDestination)+49>=mouseX) && (getPosY(caseDestination)<=mouseY && getPosY(caseDestination)+49>=mouseY)){
+                    let clone = selectedPion.cloneNode();
+                    clone.setAttributeNS(null, 'cx', (getPosX(caseDestination) + 25).toString());
+                    clone.setAttributeNS(null, 'cy', (getPosY(caseDestination) + 25).toString());
+                    caseDestination.setAttribute('class', 'busy '+getCurrentColor());
+                    caseDestination.appendChild(clone);
+                    caseActive.removeChild(selectedPion);
+                    caseActive.setAttribute('class', 'free');
+                    //on mange le pion
+                    console.log(caseSaute);
+                    caseSaute.removeChild(caseSaute.querySelector('.pion'));
+                    caseSaute.setAttribute('class', 'free');
+                }
+            }
         }
     }
 
