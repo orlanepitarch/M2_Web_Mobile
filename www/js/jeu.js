@@ -80,55 +80,82 @@
             let caseOpt = [];
             let caseTake = new Map();
             if (statusPion == 'pion') {
-                if (colorPion == 'black') {
-                    let caseLeft = document.getElementById((posRow + 1) + '/' + (posCol - 1));
-                    let caseRight = document.getElementById((posRow + 1) + '/' + (posCol + 1));
-                    if (caseLeft != null && caseLeft.classList.contains('free')) {
-                        caseOpt.push(caseLeft);
-                    }
-                    if (caseRight != null && caseRight.classList.contains('free') && caseRight != null) {
-                        caseOpt.push(caseRight);
-                    }
-                    //Si les cases droites / gauches sont occupés par l'adversaire,
-                    //On vérifie que l'on peut damer le pion
-                    // si la prise est possible on stock la case adversere en clé, la case destination en valeure
-                    if (caseLeft != null && caseLeft.classList.contains('white')){
-                        let casePriseAdvLeft = document.getElementById((posRow+2) + '/' + (posCol-2));
-                        if(casePriseAdvLeft != null && casePriseAdvLeft.classList.contains('free')){
-                            caseTake.set(caseLeft, casePriseAdvLeft);
-                        }
-                    }
-                    if (caseRight!= null && caseRight.classList.contains('white')){
-                        let casePriseAdvRight = document.getElementById((posRow+2) + '/' + (posCol+2));
-                        if(casePriseAdvRight != null && casePriseAdvRight.classList.contains('free')){
-                            caseTake.set(caseRight, casePriseAdvRight);
-                        }
-                    }
-                    return {
-                        caseOpt,
-                        caseTake
-                    }
-                } else if (colorPion == 'white') {
+                if (colorPion == 'white') {
                     let caseLeft = document.getElementById((posRow - 1) + '/' + (posCol - 1));
                     let caseRight = document.getElementById((posRow - 1) + '/' + (posCol + 1));
+                    let caseBackRight = document.getElementById((posRow + 1) + '/' + (posCol + 1));
+                    let caseBackLeft = document.getElementById((posRow + 1) + '/' + (posCol - 1));
                     if (caseLeft != null && caseLeft.classList.contains('free')) {
                         caseOpt.push(caseLeft);
                     }
                     if (caseRight != null && caseRight.classList.contains('free')) {
                         caseOpt.push(caseRight);
                     }
-                    //Si les cases droites / gauches sont occupés par l'adversaire,
+                    //Si les cases droites / gauches / arrDroite / arrGauche sont occupés par l'adversaire,
                     //On vérifie que l'on peut damer le pion
-                    if (caseLeft != null && caseLeft.classList.contains('black')){
-                        let casePriseAdvLeft = document.getElementById((posRow-2) + '/' + (posCol-2));
-                        if(casePriseAdvLeft != null && casePriseAdvLeft.classList.contains('free')){
+                    if (caseLeft != null && caseLeft.classList.contains('black')) {
+                        let casePriseAdvLeft = document.getElementById((posRow - 2) + '/' + (posCol - 2));
+                        if (casePriseAdvLeft != null && casePriseAdvLeft.classList.contains('free')) {
                             caseTake.set(caseLeft, casePriseAdvLeft);
                         }
                     }
-                    if (caseRight != null && caseRight.classList.contains('black')){
-                        let casePriseAdvRight = document.getElementById((posRow-2) + '/' + (posCol+2));
-                        if(casePriseAdvRight != null && casePriseAdvRight.classList.contains('free')){
+                    if (caseRight != null && caseRight.classList.contains('black')) {
+                        let casePriseAdvRight = document.getElementById((posRow - 2) + '/' + (posCol + 2));
+                        if (casePriseAdvRight != null && casePriseAdvRight.classList.contains('free')) {
                             caseTake.set(caseRight, casePriseAdvRight);
+                        }
+                    }
+                    if (caseBackLeft != null && caseBackLeft.classList.contains('black')) {
+                        let casePriseAdvBackLeft = document.getElementById((posRow + 2) + '/' + (posCol - 2));
+                        if (casePriseAdvBackLeft != null && casePriseAdvBackLeft.classList.contains('free')) {
+                            caseTake.set(caseBackLeft, casePriseAdvBackLeft);
+                        }
+                    }
+                    if (caseBackRight != null && caseBackRight.classList.contains('black')) {
+                        let casePriseAdvBackRight = document.getElementById((posRow + 2) + '/' + (posCol + 2));
+                        if (casePriseAdvBackRight != null && casePriseAdvBackRight.classList.contains('free')) {
+                            caseTake.set(caseBackRight, casePriseAdvBackRight);
+                        }
+                    }
+                    return {
+                        caseOpt,
+                        caseTake
+                    }
+                } else if(colorPion == 'black') {
+                    let caseLeft = document.getElementById((posRow + 1) + '/' + (posCol - 1));
+                    let caseRight = document.getElementById((posRow + 1) + '/' + (posCol + 1));
+                    let caseBackRight = document.getElementById((posRow - 1) + '/' + (posCol + 1));
+                    let caseBackLeft = document.getElementById((posRow - 1 ) + '/' + (posCol - 1));
+                    if (caseLeft != null && caseLeft.classList.contains('free')) {
+                        caseOpt.push(caseLeft);
+                    }
+                    if (caseRight != null && caseRight.classList.contains('free')) {
+                        caseOpt.push(caseRight);
+                    }
+                    //Si les cases droites / gauches / arrDroite / arrGauche sont occupés par l'adversaire,
+                    //On vérifie que l'on peut damer le pion
+                    if (caseLeft != null && caseLeft.classList.contains('white')) {
+                        let casePriseAdvLeft = document.getElementById((posRow + 2) + '/' + (posCol - 2));
+                        if (casePriseAdvLeft != null && casePriseAdvLeft.classList.contains('free')) {
+                            caseTake.set(caseLeft, casePriseAdvLeft);
+                        }
+                    }
+                    if (caseRight != null && caseRight.classList.contains('white')) {
+                        let casePriseAdvRight = document.getElementById((posRow + 2) + '/' + (posCol + 2));
+                        if (casePriseAdvRight != null && casePriseAdvRight.classList.contains('free')) {
+                            caseTake.set(caseRight, casePriseAdvRight);
+                        }
+                    }
+                    if (caseBackLeft != null && caseBackLeft.classList.contains('white')) {
+                        let casePriseAdvBackLeft = document.getElementById((posRow - 2) + '/' + (posCol - 2));
+                        if (casePriseAdvBackLeft != null && casePriseAdvBackLeft.classList.contains('free')) {
+                            caseTake.set(caseBackLeft, casePriseAdvBackLeft);
+                        }
+                    }
+                    if (caseBackRight != null && caseBackRight.classList.contains('white')) {
+                        let casePriseAdvBackRight = document.getElementById((posRow - 2) + '/' + (posCol + 2));
+                        if (casePriseAdvBackRight != null && casePriseAdvBackRight.classList.contains('free')) {
+                            caseTake.set(caseBackRight, casePriseAdvBackRight);
                         }
                     }
                     return {
@@ -136,9 +163,8 @@
                         caseTake
                     }
                 } else {
-                    throw Error('Couleur de pion selectionné impossible ! ');
+                    throw Error('La couleur du pion selectionné n\'existe pas');
                 }
-
             }/* else if (statusPion == 'dame'){
             return caseOpt;
         } else {
