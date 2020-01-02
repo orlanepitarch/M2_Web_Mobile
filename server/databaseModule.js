@@ -3,7 +3,7 @@ var http = require('http').createServer(app);
 var io = require('socket.io')(http);
 var mongoose = require('mongoose');
 
-mongoose.connect('mongodb://localhost/test', {useNewUrlParser: true});
+mongoose.connect('mongodb://localhost/test2', {useNewUrlParser: true});
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function() {});
@@ -11,7 +11,6 @@ db.once('open', function() {});
 /**
  * @typedef Player
  * @type {object}
- * @property {number} id - the player ID.
  * @property {string} pseudo - the player pseudo.
  * @property {number} rating - the player rating.
  * @property {string} password - the player encrypted password
@@ -20,7 +19,6 @@ db.once('open', function() {});
 /** @type {Player} */
 
 var playerSchema = new mongoose.Schema({
-  id: {type:Number, min:0},
   pseudo: {type: String, minlength:3, maxlength: 15},
   rating: {type:Number, min:0}, 
   password: {type:String}
@@ -80,7 +78,7 @@ var Move = mongoose.model('Move', moveSchema);
 /** @type {Game} */
 
 var gameSchema = new mongoose.Schema({
-    moves: [movesSchema],
+    moves: [moveSchema],
     playerWhite: playerSchema,
     playerBlack: playerSchema,
     date: {type:Date, default: Date.now}
@@ -96,14 +94,15 @@ var Game = mongoose.model('Game', gameSchema);
  * @param {string} Ppassword - a password
  */
 
-function addAPlayer(Pid, Ppseudo, Prating){
-    var newPlayer = new Player({ id: Pid, pseudo: Ppseudo, rating:Prating, password:Ppassword });
+function addAPlayer(Ppseudo, Prating, Ppassword){
+    var newPlayer = new Player({pseudo: Ppseudo, rating:Prating, password:Ppassword });
     newPlayer.save(function (err) {
         if (err) { throw err; }
         else{
+          console.log(newPlayer.pseudo + ' ajouté avec succès');
         }
     });
-}
+  }
 
 /**
  * add a game to the database
@@ -128,73 +127,63 @@ function addAPlayer(Pid, Ppseudo, Prating){
     });
  }
 
- /**
-  * find a player by id
-  * @param {number} thePlayerId - the player id
-  * @return {Player} - the player
-  */
-
- function findAPlayerById(thePlayerId){
-  Player.find({id: thePlayerId}, function (err, comms) {
-    if (err) { throw err; }
-    else{
-        return comms;
-    }
-  });
- }
-
   /**
   * find a player by pseudo
   * @param {string} thePlayerPseudo - the player pseudo
   * @return {Player} - the player
   */
 
- function findAPlayerByPseudo(thePlayerPseudo){
-  Player.find({pseudo: thePlayerPseudo}, function (err, comms) {
+ async function findAPlayerByPseudo(thePlayerPseudo){
+  const res = await Player.find({pseudo: thePlayerPseudo}, function (err, comms) {
     if (err) { throw err; }
     else{
-        return comms;
-    }
+    } 
   });
+  if(res.length!=0){
+    return res[0];
+  }
+  else{
+    return false;
+  }
  }
 
  /**
   * find all the players in the database
   */
- function findAllPlayers(){
-  Player.find({}, function (err, comms) {
+ async function findAllPlayers(){
+  var res = await Player.find({}, function (err, comms) {
     if (err) { throw err; }
     else{
-        return comms;
     }
   });
+  return res;
  }
 
  /**
-  * return the password of a given player (by id)
-  * @param {number} playerId - the player id
+  * return the password of a given player (by pseudo)
+  * @param {number} playerPseudo - the player pseudo
   */
 
- function findAPasswordForAGivenPlayerById(playerId){
-    var p = findAPlayerById(playerId);
+ async function findAPasswordForAGivenPlayerByPseudo(playerPseudo){
+    var p = await findAPlayerByPseudo(playerPseudo);
     return p.password;
  }
 
  /**
-  * update a player rating and find him by id
-  * @param {number} thePlayerId - the player id
-  * @param {number} thePlayerNewRating - the player rating
+  * update a player rating
+  * @param {string} pPseudo - the player pseudo
+  * @param {number} pNewRating, - the player rating
   */
- function updateAPlayerRatingAndFindHimById(thePlayerId, thePlayerNewRating){
-   player = findAPlayerById(thePlayerId);
-   player.rating=thePlayerNewRating;
+ function updateAPlayerRating(pPseudo, pNewRating){
+   player = findAPlayerByPseudo(pPseudo);
+   player.rating=pNewRating;
    player.save();
  }
 
   /**
   * find a game by players involved
-  * @param {Player} blackPlayerPseudo - the black player pseudo
-  * @param {Player} whitePlayerPseudo - the white player pseudo
+  * @param {string} blackPlayerPseudo - the black player pseudo
+  * @param {string} whitePlayerPseudo - the white player pseudo
   * @return {Game} - the games
   */
 
@@ -212,9 +201,8 @@ function addAPlayer(Pid, Ppseudo, Prating){
 
 exports.addAPlayer = addAPlayer;
 exports.addAGame = addAGame;
-exports.findAPlayerById = findAPlayerById;
 exports.findAPlayerByPseudo = findAPlayerByPseudo;
 exports.findAllPlayers = findAllPlayers;
-exports.updateAPlayerRatingAndFindHimById = updateAPlayerRatingAndFindHimById;
+exports.updateAPlayerRating = updateAPlayerRating;
 exports.findGamesByPlayers = findGamesByPlayers;
-exports.findAPasswordForAGivenPlayerById = findAPasswordForAGivenPlayerById;
+exports.findAPasswordForAGivenPlayerByPseudo = findAPasswordForAGivenPlayerByPseudo;
