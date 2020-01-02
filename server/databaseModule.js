@@ -3,7 +3,7 @@ var http = require('http').createServer(app);
 var io = require('socket.io')(http);
 var mongoose = require('mongoose');
 
-mongoose.connect('mongodb://localhost/test2', {useNewUrlParser: true});
+mongoose.connect('mongodb://127.0.0.1:27017/JeuDeDame', {useNewUrlParser: true, useUnifiedTopology: true});
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function() {});
@@ -133,17 +133,20 @@ function addAPlayer(Ppseudo, Prating, Ppassword){
   * @return {Player} - the player
   */
 
- async function findAPlayerByPseudo(thePlayerPseudo){
-  const res = await Player.find({pseudo: thePlayerPseudo}, function (err, comms) {
-    if (err) { throw err; }
-    else{
-    } 
-  });
-  if(res.length!=0){
-    return res[0];
+ async function findAPlayerByPseudo(thePlayerPseudo, password){
+  const user = await Player.findOne({pseudo: thePlayerPseudo});
+  if (user) {
+    const user = await Player.findOne({pseudo: thePlayerPseudo, password: password});
+    if (user){
+      return user;
+    }
+    //mdp faux :
+    else {
+      return "Mauvais mot de passe";
+    }
   }
-  else{
-    return false;
+  else{ 
+      return "user unknown"; 
   }
  }
 

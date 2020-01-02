@@ -38,17 +38,39 @@
     <body>
         <script type="text/javascript" src="js/index.js"></script>
 
+        <section id="connexion">
+            <form id="formConnexion">
+                <div class="form-group">
+                    <label for="login">Pseudo (taille > 3)</label>
+                    <input type="text" id="login" class="form-control" name="pseudo" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" class="form-control" name="mdp" required>
+                </div>
+                <button type="submit">Se Connecter</button>
+            </form>
+        </section>
+
+        <section id="displayMessage">
+        </section>
+
         <input type="text" name="message" id="message" placeholder="Votre message..." size="50" />
         <button id="envoiMessage">Envoyer</button>
 
         <section id="zone_chat">
             
         </section>
+
+
         
         <script type="text/javascript" src="cordova.js"></script>
 
         <!-- lien vers le fichier client socket.io.js du module pour réaliser la communication entre le client et le serveur-->
         <script type="text/javascript" src="js/socket.io.js"></script>
+
+        <script type="text/javascript" src="js/login.js"></script>
+
         
 
 

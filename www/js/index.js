@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 var app = {
     // Application Constructor
     initialize: function() {
@@ -28,6 +29,8 @@ var app = {
     // 'pause', 'resume', etc.
     onDeviceReady: function() {
 
+        var login = new log(); 
+        
         // on se connecte sur le port 28400 (notre serveur node) quand le device est pret
         var socket = io.connect('http://localhost:28400');
      
@@ -36,9 +39,34 @@ var app = {
             insereMessage(data.message);
         })
 
-        var pseudo = prompt('Quel est votre pseudo ?');
-        socket.emit('nouveau_client', socket.id);
+        var formulaire = document.getElementById("formConnexion");
 
+        formulaire.onsubmit = function() {
+            pseudo = formulaire.pseudo.value;
+            password = formulaire.mdp.value;
+            socket.emit("login", pseudo, password);
+            return false;
+        };
+
+        socket.on("mauvaisMDP", function() {
+            login.mauvaisMDP();
+        });
+
+        socket.on('connexionSuccess', function() {
+            login.connexionSuccess();
+            socket.emit('nouveau_client', socket.id);
+        });
+
+        socket.on('waitingAdversaire', function() {
+            login.waitingScreen();
+        });
+
+        socket.on('findAdversaire', function() {
+            console.log("find adversaire");
+            login.findAdversaire();
+        });
+
+    
         // détection du click sur le bouton Envoyer signalant qu'un message a été envoyé
         document.getElementById('envoiMessage').onclick = function() {
             var message = document.getElementById('message').value;
