@@ -23,15 +23,16 @@
         damier.addEventListener('mousedown', clickedPion);
         damier.addEventListener('mouseup', releasePion);
         damier.addEventListener('touchstart', clickedPion());
-        damier.addEventListener('touchend', releasePion);
         damier.addEventListener('touchleave', releasePion);
-        damier.addEventListener('touchcancel', releasePion);
 
         function clickedPion(event) {
             if (event.target.classList.contains('draggable')) {
                 selectedPion = event.target;
+                console.log(selectedPion);
                 caseActive = selectedPion.parentNode;
+                console.log(caseActive);
                 caseOptions = calculCaseOptions(getCurrentPosRow(caseActive), getCurrentPosCol(caseActive), getCurrentStatus(), getCurrentColor()).caseOpt;
+                console.log(caseOptions);
                 casePrises = calculCaseOptions(getCurrentPosRow(caseActive), getCurrentPosCol(caseActive), getCurrentStatus(), getCurrentColor()).caseTake;
 
 
