@@ -6,12 +6,17 @@
         makeDraggable();
     }*/
 
-    let selectedPion, caseActive
+    let selectedPion, caseActive, caseChoisie
     let caseOptions = [];
     let casePrises = new Map();
+    let tailleDamier = 10;
 
     //let tailleDamier = prompt("Veuillez choisir la taille de votre damier (valeur minimale 6) :")
-    new Damier(10);
+    new Damier(tailleDamier);
+    let test = document.getElementById("3/4").querySelector('.pion');
+    test.setAttribute('class', 'dame black draggable');
+    test.setAttributeNS(null, 'stroke', 'red');
+    test.setAttributeNS(null, 'stroke-width', '4');
 
     function makeDraggable(event) {
         let damier = event.target;
@@ -24,6 +29,8 @@
                 caseActive = selectedPion.parentNode;
                 caseOptions = calculCaseOptions(getCurrentPosRow(caseActive), getCurrentPosCol(caseActive), getCurrentStatus(), getCurrentColor()).caseOpt;
                 casePrises = calculCaseOptions(getCurrentPosRow(caseActive), getCurrentPosCol(caseActive), getCurrentStatus(), getCurrentColor()).caseTake;
+
+
                 //Si la prise de pion adverse est possible, elle est OBLIGATOIRE !
                 if(casePrises.size == 0){
                     for (let selectableCase of caseOptions) {
@@ -37,13 +44,25 @@
                     }
                 } else {
                     for (let [caseSaute, caseDestination] of casePrises) {
-                        let coloredIndicatorOfPrise = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-                        coloredIndicatorOfPrise.setAttributeNS(null, 'r', '11');
-                        coloredIndicatorOfPrise.setAttributeNS(null, 'fill', 'red');
-                        coloredIndicatorOfPrise.setAttributeNS(null, 'cx', (getPosX(caseDestination) + 25).toString());
-                        coloredIndicatorOfPrise.setAttributeNS(null, 'cy', (getPosY(caseDestination) + 25).toString());
-                        coloredIndicatorOfPrise.setAttribute('class', 'indicatorPrise');
-                        caseDestination.appendChild(coloredIndicatorOfPrise);
+                        if(getCurrentStatus() == 'pion'){
+                                let coloredIndicatorOfPrise = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                                coloredIndicatorOfPrise.setAttributeNS(null, 'r', '11');
+                                coloredIndicatorOfPrise.setAttributeNS(null, 'fill', 'red');
+                                coloredIndicatorOfPrise.setAttributeNS(null, 'cx', (getPosX(caseDestination) + 25).toString());
+                                coloredIndicatorOfPrise.setAttributeNS(null, 'cy', (getPosY(caseDestination) + 25).toString());
+                                coloredIndicatorOfPrise.setAttribute('class', 'indicatorPrise');
+                                caseDestination.appendChild(coloredIndicatorOfPrise);
+                        } else {
+                            for(let cd of caseDestination){
+                                let coloredIndicatorOfPrise = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                                coloredIndicatorOfPrise.setAttributeNS(null, 'r', '11');
+                                coloredIndicatorOfPrise.setAttributeNS(null, 'fill', 'red');
+                                coloredIndicatorOfPrise.setAttributeNS(null, 'cx', (getPosX(cd) + 25).toString());
+                                coloredIndicatorOfPrise.setAttributeNS(null, 'cy', (getPosY(cd) + 25).toString());
+                                coloredIndicatorOfPrise.setAttribute('class', 'indicatorPrise');
+                                cd.appendChild(coloredIndicatorOfPrise);
+                            }
+                        }
                     }
                 }
 
@@ -51,12 +70,21 @@
         }
 
         function releasePion(event) {
+            console.log(document.querySelector('.white'));
+            if(document.querySelector('.white') == null){
+                alert("Partie Terminée : Les Noirs ont gagnés !");
+            } else if (document.querySelector('.black') == null) {
+                alert("Partie Terminée : Les Blancs ont gagnés !");
+            }
+
             //prise OBLIGATOIRE
             if(casePrises.size == 0){
-                moving(caseOptions, event);
+                caseChoisie = moving(caseOptions, event);
             } else {
-                prise(casePrises, event);
+                caseChoisie = prise(casePrises, event);
             }
+            upgradePionToDame(getCurrentPosRow(caseChoisie), getCurrentColor(), getCurrentStatus(), tailleDamier);
+
         }
 
         //hotfix pour tout screen, correcteur de la position de souris
@@ -74,12 +102,45 @@
         }
 
         //fonction permettant de proposer des cases jouables (tableau de <g></g>) selon
-        // la couleur du pion, son statut (pion ou dame), la position du pion courant cliqué
+        // la couleur du pion, son sta                console.log("moncul");tut (pion ou dame), la position du pion courant cliqué
         // return caseOptions[]
         function calculCaseOptions(posRow, posCol, statusPion, colorPion) {
+            if(statusPion == 'pion'){
+                return comportementPion(posRow, posCol, colorPion);
+            } else if (statusPion == 'dame'){
+                return comportementDame(posRow, posCol, colorPion);
+            } else {
+                throw Error("Status spécifie incorrect");
+            }
+        }
+
+        function getPosX(selectedCase) {
+            return parseInt(selectedCase.querySelector('rect').getAttribute('x'));
+        }
+
+        function getPosY(selectedCase) {
+            return parseInt(selectedCase.querySelector('rect').getAttribute('y'));
+        }
+
+        function getCurrentPosRow(caseActive) {
+            return parseInt(caseActive.getAttribute('id').split("/")[0]);
+        }
+
+        function getCurrentPosCol(caseActive) {
+            return parseInt(caseActive.getAttribute('id').split("/")[1]);
+        }
+
+        function getCurrentStatus() {
+            return selectedPion.classList[0];
+        }
+
+        function getCurrentColor() {
+            return selectedPion.classList[1];
+        }
+
+        function comportementPion(posRow, posCol, colorPion) {
             let caseOpt = [];
             let caseTake = new Map();
-            if (statusPion == 'pion') {
                 if (colorPion == 'white') {
                     let caseLeft = document.getElementById((posRow - 1) + '/' + (posCol - 1));
                     let caseRight = document.getElementById((posRow - 1) + '/' + (posCol + 1));
@@ -165,44 +226,149 @@
                 } else {
                     throw Error('La couleur du pion selectionné n\'existe pas');
                 }
-            }/* else if (statusPion == 'dame'){
-            return caseOpt;
-        } else {
-            throw Error("Status spécifie incorrect");
         }
 
-        if(.classList.contains('free')){
+        function comportementDame(posRow, posCol, colorPion){
+            let caseOpt = [];
+            let caseTake = new Map();
+            let caseDestinationsPossibles = [];
+            let adverseColor = colorPion == 'black' ? 'white' : 'black';
 
-        }*/
+            //déplacemement possibles
+            //diag left
+            let i = 1;
+            while(document.getElementById((posRow+i)+'/'+(posCol-i)) != null){
+                if (document.getElementById((posRow+i)+'/'+(posCol-i)).classList.contains('free')){
+                    caseOpt.push(document.getElementById((posRow+i)+'/'+(posCol-i)));
+                } else if (document.getElementById((posRow+i)+'/'+(posCol-i)).classList.contains(colorPion)) {
+                    break;
+                }  else if (document.getElementById((posRow+i)+'/'+(posCol-i)).classList.contains(adverseColor)){
+                    let caseAdverse = document.getElementById((posRow+i)+'/'+(posCol-i));
+                    i++;
+                    while(document.getElementById((posRow+i)+'/'+(posCol-i)) != null){
+                        if (document.getElementById((posRow+i)+'/'+(posCol-i)).classList.contains('free')){
+                            caseDestinationsPossibles.push(document.getElementById((posRow+i)+'/'+(posCol-i)));
+                            caseTake.set(caseAdverse, caseDestinationsPossibles);
+                        } else {
+                            break;
+                        }
+                        i++;
+                    }
+                    break;
+                }
+                i++;
+            }
+            //déplacemement possibles
+            //diag right
+            caseDestinationsPossibles = [];
+            i = 1;
+            while(document.getElementById((posRow+i)+'/'+(posCol+i)) != null){
+                if (document.getElementById((posRow+i)+'/'+(posCol+i)).classList.contains('free')){
+                    caseOpt.push(document.getElementById((posRow+i)+'/'+(posCol+i)));
+                } else if (document.getElementById((posRow+i)+'/'+(posCol+i)).classList.contains(colorPion)) {
+                    break;
+                }  else if (document.getElementById((posRow+i)+'/'+(posCol+i)).classList.contains(adverseColor)){
+                    let caseAdverse = document.getElementById((posRow+i)+'/'+(posCol+i));
+                    i++;
+                    while(document.getElementById((posRow+i)+'/'+(posCol+i)) != null){
+                        if (document.getElementById((posRow+i)+'/'+(posCol+i)).classList.contains('free')){
+                            caseDestinationsPossibles.push(document.getElementById((posRow+i)+'/'+(posCol+i)))
+                            caseTake.set(caseAdverse, caseDestinationsPossibles);
+                        } else {
+                            break;
+                        }
+                        i++;
+                    }
+                    break;
+                }
+                i++;
+            }
+
+            //diag back left
+            caseDestinationsPossibles = [];
+            i = 1;
+            while(document.getElementById((posRow-i)+'/'+(posCol-i)) != null){
+                if (document.getElementById((posRow-i)+'/'+(posCol-i)).classList.contains('free')){
+                    caseOpt.push(document.getElementById((posRow-i)+'/'+(posCol-i)));
+                } else if (document.getElementById((posRow-i)+'/'+(posCol-i)).classList.contains(colorPion)) {
+                    break;
+                }  else if (document.getElementById((posRow-i)+'/'+(posCol-i)).classList.contains(adverseColor)){
+                    let caseAdverse = document.getElementById((posRow-i)+'/'+(posCol-i));
+                    i++;
+                    while(document.getElementById((posRow-i)+'/'+(posCol-i)) != null){
+                        if (document.getElementById((posRow-i)+'/'+(posCol-i)).classList.contains('free')){
+                            caseDestinationsPossibles.push(document.getElementById((posRow-i)+'/'+(posCol-i)))
+                            caseTake.set(caseAdverse, caseDestinationsPossibles);
+                        } else {
+                            break;
+                        }
+                        i++;
+                    }
+                    break;
+                }
+                i++;
+            }
+            caseDestinationsPossibles = [];
+            i = 1;
+            while(document.getElementById((posRow-i)+'/'+(posCol+i)) != null){
+                if (document.getElementById((posRow-i)+'/'+(posCol+i)).classList.contains('free')){
+                    caseOpt.push(document.getElementById((posRow-i)+'/'+(posCol+i)));
+                } else if (document.getElementById((posRow-i)+'/'+(posCol+i)).classList.contains(colorPion)) {
+                    break;
+                }  else if (document.getElementById((posRow-i)+'/'+(posCol+i)).classList.contains(adverseColor)){
+                    let caseAdverse = document.getElementById((posRow-i)+'/'+(posCol+i));
+                    i++;
+                    while(document.getElementById((posRow-i)+'/'+(posCol+i)) != null){
+                        if (document.getElementById((posRow-i)+'/'+(posCol+i)).classList.contains('free')){
+                            caseDestinationsPossibles.push(document.getElementById((posRow-i)+'/'+(posCol+i)))
+                            caseTake.set(caseAdverse, caseDestinationsPossibles);
+                        } else {
+                            break;
+                        }
+                        i++;
+                    }
+                    break;
+                }
+                i++;
+            }
+            return {
+                caseOpt,
+                caseTake
+            }
         }
 
-        function getPosX(selectedCase) {
-            return parseInt(selectedCase.querySelector('rect').getAttribute('x'));
+        //fonction de vérification et de passage d'un pion à une dame
+        function upgradePionToDame(posRow, colorPion, statusPion, tailleDamier){
+           let isUpgradable = false;
+            if(statusPion == "pion"){
+                if(colorPion == 'black'){
+                    if(posRow+1 == tailleDamier){
+                        selectedPion.setAttribute('class', 'dame black draggable');
+                        selectedPion.setAttributeNS(null, 'stroke', 'red');
+                        selectedPion.setAttributeNS(null, 'stroke-width', '4');
+                        isUpgradable = true;
+                    }
+                } else {
+                    if(posRow == 0){
+                        selectedPion.setAttribute('class', 'dame white draggable');
+                        selectedPion.setAttributeNS(null, 'stroke', 'red');
+                        selectedPion.setAttributeNS(null, 'stroke-width', '4');
+                        isUpgradable = true;
+                    }
+                }
+            } else {
+                isUpgradable = false;
+            }
+            return isUpgradable;
         }
 
-        function getPosY(selectedCase) {
-            return parseInt(selectedCase.querySelector('rect').getAttribute('y'));
-        }
-
-        function getCurrentPosRow(caseActive) {
-            return parseInt(caseActive.getAttribute('id').split("/")[0]);
-        }
-
-        function getCurrentPosCol(caseActive) {
-            return parseInt(caseActive.getAttribute('id').split("/")[1]);
-        }
-
-        function getCurrentStatus() {
-            return selectedPion.classList[0];
-        }
-
-        function getCurrentColor() {
-            return selectedPion.classList[1];
-        }
 
         function moving(caseOptions, event){
+            //Si la case Destination n'est pas authoriser alors elle reste par défaut la caseActive
+            let caseDestination = caseActive;
             let mouseX = getMousePosition(event).x;
             let mouseY = getMousePosition(event).y;
+            //si la personne relache le clic sans rien faire on efface au moins les indicateurs
             for (let selectableCase of caseOptions) {
                 selectableCase.removeChild(selectableCase.querySelector('.indicator'));
                 //si le release s'effectue au dessus d'une case authorisée
@@ -214,31 +380,65 @@
                     selectableCase.appendChild(clone);
                     caseActive.removeChild(selectedPion);
                     caseActive.setAttribute('class', 'free');
+                    //la caseFestination devient la case selectionné (après vérification)
+                    caseDestination = selectableCase;
+                    // le pion selectionne devient le clone de son dépacement
+                    // nécessaire pour l'upgrade en dame
+                    selectedPion = clone;
                 }
             }
+            return caseDestination;
         }
 
         function prise(casePrises, event){
+            let caseDesti = caseActive
             let mouseX = getMousePosition(event).x;
             let mouseY = getMousePosition(event).y;
             for (let [caseSaute, caseDestination] of casePrises){
-                caseDestination.removeChild(caseDestination.querySelector('.indicatorPrise'));
-                if((getPosX(caseDestination)<=mouseX && getPosX(caseDestination)+49>=mouseX) && (getPosY(caseDestination)<=mouseY && getPosY(caseDestination)+49>=mouseY)){
-                    let clone = selectedPion.cloneNode();
-                    clone.setAttributeNS(null, 'cx', (getPosX(caseDestination) + 25).toString());
-                    clone.setAttributeNS(null, 'cy', (getPosY(caseDestination) + 25).toString());
-                    caseDestination.setAttribute('class', 'busy '+getCurrentColor());
-                    caseDestination.appendChild(clone);
-                    caseActive.removeChild(selectedPion);
-                    caseActive.setAttribute('class', 'free');
-                    //on mange le pion
-                    console.log(caseSaute);
-                    caseSaute.removeChild(caseSaute.querySelector('.pion'));
-                    caseSaute.setAttribute('class', 'free');
+                if(getCurrentStatus() == 'pion'){
+                    caseDestination.removeChild(caseDestination.querySelector('.indicatorPrise'));
+                    if((getPosX(caseDestination)<=mouseX && getPosX(caseDestination)+49>=mouseX) && (getPosY(caseDestination)<=mouseY && getPosY(caseDestination)+49>=mouseY)){
+                        let clone = selectedPion.cloneNode();
+                        clone.setAttributeNS(null, 'cx', (getPosX(caseDestination) + 25).toString());
+                        clone.setAttributeNS(null, 'cy', (getPosY(caseDestination) + 25).toString());
+                        caseDestination.setAttribute('class', 'busy '+getCurrentColor());
+                        caseDestination.appendChild(clone);
+                        caseActive.removeChild(selectedPion);
+                        caseActive.setAttribute('class', 'free');
+                        //on mange le pion (pion ou dame) saute
+                        caseSaute.removeChild(caseSaute.querySelector('.draggable'));
+                        caseSaute.setAttribute('class', 'free');
+                        //la caseFestination devient la case selectionné (après vérification)
+                        caseDesti = caseDestination;
+                        // nécessaire pour l'upgrade en dame
+                        selectedPion = clone;
+                    }
+                } else {
+                    for(let cd of caseDestination){
+                        cd.removeChild(cd.querySelector('.indicatorPrise'));
+                        if((getPosX(cd)<=mouseX && getPosX(cd)+49>=mouseX) && (getPosY(cd)<=mouseY && getPosY(cd)+49>=mouseY)){
+                            let clone = selectedPion.cloneNode();
+                            clone.setAttributeNS(null, 'cx', (getPosX(cd) + 25).toString());
+                            clone.setAttributeNS(null, 'cy', (getPosY(cd) + 25).toString());
+                            cd.setAttribute('class', 'busy '+getCurrentColor());
+                            cd.appendChild(clone);
+                            caseActive.removeChild(selectedPion);
+                            caseActive.setAttribute('class', 'free');
+                            //on mange le pion saute
+                            caseSaute.removeChild(caseSaute.querySelector('.draggable'));
+                            caseSaute.setAttribute('class', 'free');
+                            //la caseFestination devient la case selectionné (après vérification)
+                            caseDesti = cd;
+                            // nécessaire pour l'upgrade en dame
+                            selectedPion = clone;
+                        }
+                    }
                 }
             }
+            return caseDesti;
         }
     }
+
 
 /*
     makeDraggable(event){
