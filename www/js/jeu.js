@@ -22,6 +22,10 @@
         let damier = event.target;
         damier.addEventListener('mousedown', clickedPion);
         damier.addEventListener('mouseup', releasePion);
+        damier.addEventListener('touchstart', clickedPion());
+        damier.addEventListener('touchend', releasePion);
+        damier.addEventListener('touchleave', releasePion);
+        damier.addEventListener('touchcancel', releasePion);
 
         function clickedPion(event) {
             if (event.target.classList.contains('draggable')) {
@@ -70,7 +74,6 @@
         }
 
         function releasePion(event) {
-            console.log(document.querySelector('.white'));
             if(document.querySelector('.white') == null){
                 alert("Partie Terminée : Les Noirs ont gagnés !");
             } else if (document.querySelector('.black') == null) {
