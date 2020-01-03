@@ -1,4 +1,5 @@
-/*
+/*import {Damier} from "./damier.js";
+
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
@@ -16,7 +17,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
 var app = {
     // Application Constructor
     initialize: function() {
@@ -28,6 +28,8 @@ var app = {
     // Bind any cordova events here. Common events are:
     // 'pause', 'resume', etc.
     onDeviceReady: function() {
+        //this.startGame();
+    
 
         var login = new log(); 
         
@@ -51,7 +53,6 @@ var app = {
         socket.on("mauvaisMDP", function() {
             login.mauvaisMDP();
         });
-
         socket.on('connexionSuccess', function() {
             login.connexionSuccess();
             socket.emit('nouveau_client', socket.id);
@@ -85,7 +86,12 @@ var app = {
             document.getElementById('zone_chat').appendChild(p);
         }  
     },
-
+    startGame: function () {
+        //game = new Game();
+    }
 };
 
 app.initialize();
+
+
+

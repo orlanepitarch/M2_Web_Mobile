@@ -35,8 +35,10 @@
         <link rel="stylesheet" type="text/css" href="css/index.css">
         <title>Hello World</title>
     </head>
+    <header>
+
+    </header>
     <body>
-        <script type="text/javascript" src="js/index.js"></script>
 
         <section id="connexion">
             <form id="formConnexion">
@@ -55,6 +57,19 @@
         <section id="displayMessage">
         </section>
 
+        <section id="game">
+            <svg height="1000" width="1000" id="damier" onload="makeDraggable(event)">
+            </svg>
+        </section>
+
+        <section id="high-score">
+        </section>
+
+        <script type="text/javascript" src="cordova.js"></script>
+        <script type="text/javascript" src="js/index.js"></script>
+
+        
+
         <input type="text" name="message" id="message" placeholder="Votre message..." size="50" />
         <button id="envoiMessage">Envoyer</button>
 
@@ -62,18 +77,12 @@
             
         </section>
 
-
-        
         <script type="text/javascript" src="cordova.js"></script>
-
         <!-- lien vers le fichier client socket.io.js du module pour réaliser la communication entre le client et le serveur-->
         <script type="text/javascript" src="js/socket.io.js"></script>
-
         <script type="text/javascript" src="js/login.js"></script>
-
-        
-
-
+        <script type="text/javascript" src="js/damier.js"></script>
+        <script type="text/javascript" src="js/jeu.js"></script>
 
     </body>
 </html>

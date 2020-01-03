@@ -105,3 +105,31 @@ h1 {
     animation:fade 3000ms infinite;
     -webkit-animation:fade 3000ms infinite;
 }
+
+
+.bigline {
+    stroke: black;
+    stroke-width: 1px;
+}
+
+.texte {
+    font-size: 10px;
+    font-family:helvetica, sans-serif;
+    fill:#000;
+    text-anchor:middle;
+}
+.th {
+    text-anchor:end;
+}
+.bigtexte {
+    font-size: 14px;
+    font-family: helvetica, sans-serif;
+    fill: #000;
+    text-anchor: middle;
+    font-weight: bold;
+}
+
+#damier{
+    margin-top: 40px;
+    margin-left: 40px;
+}
