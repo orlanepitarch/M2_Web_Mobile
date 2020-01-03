@@ -26,51 +26,52 @@
         damier.addEventListener('touchleave', releasePion);
 
         function clickedPion(event) {
-            if (event.target.classList.contains('draggable')) {
-                selectedPion = event.target;
-                console.log(selectedPion);
-                caseActive = selectedPion.parentNode;
-                console.log(caseActive);
-                caseOptions = calculCaseOptions(getCurrentPosRow(caseActive), getCurrentPosCol(caseActive), getCurrentStatus(), getCurrentColor()).caseOpt;
-                console.log(caseOptions);
-                casePrises = calculCaseOptions(getCurrentPosRow(caseActive), getCurrentPosCol(caseActive), getCurrentStatus(), getCurrentColor()).caseTake;
+            if (event != undefined) {
+                if (event.target.classList.contains('draggable')) {
+                    selectedPion = event.target;
+                    console.log(selectedPion);
+                    caseActive = selectedPion.parentNode;
+                    console.log(caseActive);
+                    caseOptions = calculCaseOptions(getCurrentPosRow(caseActive), getCurrentPosCol(caseActive), getCurrentStatus(), getCurrentColor()).caseOpt;
+                    console.log(caseOptions);
+                    casePrises = calculCaseOptions(getCurrentPosRow(caseActive), getCurrentPosCol(caseActive), getCurrentStatus(), getCurrentColor()).caseTake;
 
 
-                //Si la prise de pion adverse est possible, elle est OBLIGATOIRE !
-                if(casePrises.size == 0){
-                    for (let selectableCase of caseOptions) {
-                        let coloredIndicatorOfMoving = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-                        coloredIndicatorOfMoving.setAttributeNS(null, 'r', '9');
-                        coloredIndicatorOfMoving.setAttributeNS(null, 'fill', '#89DEF3');
-                        coloredIndicatorOfMoving.setAttributeNS(null, 'cx', (getPosX(selectableCase) + 25).toString());
-                        coloredIndicatorOfMoving.setAttributeNS(null, 'cy', (getPosY(selectableCase) + 25).toString());
-                        coloredIndicatorOfMoving.setAttribute('class', 'indicator');
-                        selectableCase.appendChild(coloredIndicatorOfMoving);
-                    }
-                } else {
-                    for (let [caseSaute, caseDestination] of casePrises) {
-                        if(getCurrentStatus() == 'pion'){
-                                let coloredIndicatorOfPrise = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-                                coloredIndicatorOfPrise.setAttributeNS(null, 'r', '11');
-                                coloredIndicatorOfPrise.setAttributeNS(null, 'fill', 'red');
-                                coloredIndicatorOfPrise.setAttributeNS(null, 'cx', (getPosX(caseDestination) + 25).toString());
-                                coloredIndicatorOfPrise.setAttributeNS(null, 'cy', (getPosY(caseDestination) + 25).toString());
-                                coloredIndicatorOfPrise.setAttribute('class', 'indicatorPrise');
-                                caseDestination.appendChild(coloredIndicatorOfPrise);
-                        } else {
-                            for(let cd of caseDestination){
-                                let coloredIndicatorOfPrise = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-                                coloredIndicatorOfPrise.setAttributeNS(null, 'r', '11');
-                                coloredIndicatorOfPrise.setAttributeNS(null, 'fill', 'red');
-                                coloredIndicatorOfPrise.setAttributeNS(null, 'cx', (getPosX(cd) + 25).toString());
-                                coloredIndicatorOfPrise.setAttributeNS(null, 'cy', (getPosY(cd) + 25).toString());
-                                coloredIndicatorOfPrise.setAttribute('class', 'indicatorPrise');
-                                cd.appendChild(coloredIndicatorOfPrise);
-                            }
+                    //Si la prise de pion adverse est possible, elle est OBLIGATOIRE !
+                    if(casePrises.size == 0){
+                        for (let selectableCase of caseOptions) {
+                            let coloredIndicatorOfMoving = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                            coloredIndicatorOfMoving.setAttributeNS(null, 'r', '9');
+                            coloredIndicatorOfMoving.setAttributeNS(null, 'fill', '#89DEF3');
+                            coloredIndicatorOfMoving.setAttributeNS(null, 'cx', (getPosX(selectableCase) + 25).toString());
+                            coloredIndicatorOfMoving.setAttributeNS(null, 'cy', (getPosY(selectableCase) + 25).toString());
+                            coloredIndicatorOfMoving.setAttribute('class', 'indicator');
+                            selectableCase.appendChild(coloredIndicatorOfMoving);
                         }
+                    } else {
+                        for (let [caseSaute, caseDestination] of casePrises) {
+                            if(getCurrentStatus() == 'pion'){
+                                    let coloredIndicatorOfPrise = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                                    coloredIndicatorOfPrise.setAttributeNS(null, 'r', '11');
+                                    coloredIndicatorOfPrise.setAttributeNS(null, 'fill', 'red');
+                                    coloredIndicatorOfPrise.setAttributeNS(null, 'cx', (getPosX(caseDestination) + 25).toString());
+                                    coloredIndicatorOfPrise.setAttributeNS(null, 'cy', (getPosY(caseDestination) + 25).toString());
+                                    coloredIndicatorOfPrise.setAttribute('class', 'indicatorPrise');
+                                    caseDestination.appendChild(coloredIndicatorOfPrise);
+                            } else {
+                                for(let cd of caseDestination){
+                                    let coloredIndicatorOfPrise = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                                    coloredIndicatorOfPrise.setAttributeNS(null, 'r', '11');
+                                    coloredIndicatorOfPrise.setAttributeNS(null, 'fill', 'red');
+                                    coloredIndicatorOfPrise.setAttributeNS(null, 'cx', (getPosX(cd) + 25).toString());
+                                    coloredIndicatorOfPrise.setAttributeNS(null, 'cy', (getPosY(cd) + 25).toString());
+                                    coloredIndicatorOfPrise.setAttribute('class', 'indicatorPrise');
+                                    cd.appendChild(coloredIndicatorOfPrise);
+                                }
+                            }
+                        }       
                     }
                 }
-
             }
         }
 
@@ -374,7 +375,9 @@
             let mouseY = getMousePosition(event).y;
             //si la personne relache le clic sans rien faire on efface au moins les indicateurs
             for (let selectableCase of caseOptions) {
-                selectableCase.removeChild(selectableCase.querySelector('.indicator'));
+                if(selectableCase.querySelector('.indicator')) {
+                    selectableCase.removeChild(selectableCase.querySelector('.indicator'));
+                }
                 //si le release s'effectue au dessus d'une case authorisée
                 if((getPosX(selectableCase)<=mouseX && getPosX(selectableCase)+49>=mouseX) && (getPosY(selectableCase)<=mouseY && getPosY(selectableCase)+49>=mouseY)){
                     let clone = selectedPion.cloneNode();
@@ -400,7 +403,10 @@
             let mouseY = getMousePosition(event).y;
             for (let [caseSaute, caseDestination] of casePrises){
                 if(getCurrentStatus() == 'pion'){
-                    caseDestination.removeChild(caseDestination.querySelector('.indicatorPrise'));
+                    if(caseDestination.querySelector('.indicatorPrise')) {
+                        caseDestination.removeChild(caseDestination.querySelector('.indicatorPrise'));
+                    }
+                
                     if((getPosX(caseDestination)<=mouseX && getPosX(caseDestination)+49>=mouseX) && (getPosY(caseDestination)<=mouseY && getPosY(caseDestination)+49>=mouseY)){
                         let clone = selectedPion.cloneNode();
                         clone.setAttributeNS(null, 'cx', (getPosX(caseDestination) + 25).toString());
