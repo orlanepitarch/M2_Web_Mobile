@@ -1,61 +1,85 @@
 
-//class Game {
+class Game {
     /*constructor(event){
         this.event = event;
         this.displayDamier();
         makeDraggable();
     }*/
+    constructor(gameType, couleurJoueur) {
+        this.selectedPion, this.caseActive, this.caseChoisie
+        this.caseOptions = [];
+        this.casePrises = new Map();
+        this.tailleDamier = 10;
+        this.couleurJoueur = couleurJoueur;
+        console.log("Joueur "+this.couleurJoueur);
+        this.tourJoueur = "white";
+        console.log("Joueur "+this.tourJoueur);
+        document.getElementById("damier").style.border = "5px solid white";
+    
+        if(gameType != "onLine") {
+            this.couleurJoueur = "white";
+        }
+    
+        //let this.tailleDamier = prompt("Veuillez choisir la taille de votre damier (valeur minimale 6) :")
+        new Damier(this.tailleDamier);
+        this.makeDraggable(document.getElementById("damier"));
+    }
+    
+    // let test = document.getElementById("3/4").querySelector('.pion');
+    // test.setAttribute('class', 'dame black draggable');
+    // test.setAttributeNS(null, 'stroke', 'red');
+    // test.setAttributeNS(null, 'stroke-width', '4');
 
-    let selectedPion, caseActive, caseChoisie
-    let caseOptions = [];
-    let casePrises = new Map();
-    let tailleDamier = 10;
-
-    //let tailleDamier = prompt("Veuillez choisir la taille de votre damier (valeur minimale 6) :")
-    new Damier(tailleDamier);
-    let test = document.getElementById("3/4").querySelector('.pion');
-    test.setAttribute('class', 'dame black draggable');
-    test.setAttributeNS(null, 'stroke', 'red');
-    test.setAttributeNS(null, 'stroke-width', '4');
-
-    function makeDraggable(event) {
-        let damier = event.target;
-        damier.addEventListener('mousedown', clickedPion);
-        damier.addEventListener('mouseup', releasePion);
-        damier.addEventListener('touchstart', clickedPion());
-        damier.addEventListener('touchleave', releasePion);
-
-        function clickedPion(event) {
+    makeDraggable(event) {
+        let damier = event;
+        damier.addEventListener('mousedown', (event) => {
+            this.clickedPion(event);
+        });
+        damier.addEventListener('mouseup', (event) => {
+            this.releasePion(event);
+        });
+        damier.addEventListener('touchstart', (event) => {
+            this.clickedPion(event);
+        });
+        damier.addEventListener('touchleave',(event) => {
+            this.releasePion(event);
+        });
+    }
+    
+    clickedPion(event) {
+        console.log(event);
             if (event != undefined) {
-                if (event.target.classList.contains('draggable')) {
-                    selectedPion = event.target;
-                    console.log(selectedPion);
-                    caseActive = selectedPion.parentNode;
-                    console.log(caseActive);
-                    caseOptions = calculCaseOptions(getCurrentPosRow(caseActive), getCurrentPosCol(caseActive), getCurrentStatus(), getCurrentColor()).caseOpt;
-                    console.log(caseOptions);
-                    casePrises = calculCaseOptions(getCurrentPosRow(caseActive), getCurrentPosCol(caseActive), getCurrentStatus(), getCurrentColor()).caseTake;
+                console.log("Joueur "+this.couleurJoueur);
+                console.log("tour :"+this.tourJoueur);
+                if (event.target.classList.contains('draggable') && this.tourJoueur==this.couleurJoueur && event.target.classList.contains(this.couleurJoueur)) {                   
+                    this.selectedPion = event.target;
+                    console.log(this.selectedPion);
+                    this.caseActive = this.selectedPion.parentNode;
+                    console.log(this.caseActive);
+                    this.caseOptions = this.calculcaseOptions(this.getCurrentPosRow(this.caseActive), this.getCurrentPosCol(this.caseActive), this.getCurrentStatus(), this.getCurrentColor()).caseOpt;
+                    console.log(this.caseOptions);
+                    this.casePrises = this.calculcaseOptions(this.getCurrentPosRow(this.caseActive), this.getCurrentPosCol(this.caseActive), this.getCurrentStatus(), this.getCurrentColor()).caseTake;
 
 
                     //Si la prise de pion adverse est possible, elle est OBLIGATOIRE !
-                    if(casePrises.size == 0){
-                        for (let selectableCase of caseOptions) {
+                    if(this.casePrises.size == 0){
+                        for (let selectableCase of this.caseOptions) {
                             let coloredIndicatorOfMoving = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
                             coloredIndicatorOfMoving.setAttributeNS(null, 'r', '9');
                             coloredIndicatorOfMoving.setAttributeNS(null, 'fill', '#89DEF3');
-                            coloredIndicatorOfMoving.setAttributeNS(null, 'cx', (getPosX(selectableCase) + 25).toString());
-                            coloredIndicatorOfMoving.setAttributeNS(null, 'cy', (getPosY(selectableCase) + 25).toString());
+                            coloredIndicatorOfMoving.setAttributeNS(null, 'cx', (this.getPosX(selectableCase) + 25).toString());
+                            coloredIndicatorOfMoving.setAttributeNS(null, 'cy', (this.getPosY(selectableCase) + 25).toString());
                             coloredIndicatorOfMoving.setAttribute('class', 'indicator');
                             selectableCase.appendChild(coloredIndicatorOfMoving);
                         }
                     } else {
-                        for (let [caseSaute, caseDestination] of casePrises) {
-                            if(getCurrentStatus() == 'pion'){
+                        for (let [caseSaute, caseDestination] of this.casePrises) {
+                            if(this.getCurrentStatus() == 'pion'){
                                     let coloredIndicatorOfPrise = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
                                     coloredIndicatorOfPrise.setAttributeNS(null, 'r', '11');
                                     coloredIndicatorOfPrise.setAttributeNS(null, 'fill', 'red');
-                                    coloredIndicatorOfPrise.setAttributeNS(null, 'cx', (getPosX(caseDestination) + 25).toString());
-                                    coloredIndicatorOfPrise.setAttributeNS(null, 'cy', (getPosY(caseDestination) + 25).toString());
+                                    coloredIndicatorOfPrise.setAttributeNS(null, 'cx', (this.getPosX(caseDestination) + 25).toString());
+                                    coloredIndicatorOfPrise.setAttributeNS(null, 'cy', (this.getPosY(caseDestination) + 25).toString());
                                     coloredIndicatorOfPrise.setAttribute('class', 'indicatorPrise');
                                     caseDestination.appendChild(coloredIndicatorOfPrise);
                             } else {
@@ -63,8 +87,8 @@
                                     let coloredIndicatorOfPrise = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
                                     coloredIndicatorOfPrise.setAttributeNS(null, 'r', '11');
                                     coloredIndicatorOfPrise.setAttributeNS(null, 'fill', 'red');
-                                    coloredIndicatorOfPrise.setAttributeNS(null, 'cx', (getPosX(cd) + 25).toString());
-                                    coloredIndicatorOfPrise.setAttributeNS(null, 'cy', (getPosY(cd) + 25).toString());
+                                    coloredIndicatorOfPrise.setAttributeNS(null, 'cx', (this.getPosX(cd) + 25).toString());
+                                    coloredIndicatorOfPrise.setAttributeNS(null, 'cy', (this.getPosY(cd) + 25).toString());
                                     coloredIndicatorOfPrise.setAttribute('class', 'indicatorPrise');
                                     cd.appendChild(coloredIndicatorOfPrise);
                                 }
@@ -75,7 +99,7 @@
             }
         }
 
-        function releasePion(event) {
+    releasePion(event) {
             if(document.querySelector('.white') == null){
                 alert("Partie Terminée : Les Noirs ont gagnés !");
             } else if (document.querySelector('.black') == null) {
@@ -83,67 +107,78 @@
             }
 
             //prise OBLIGATOIRE
-            if(casePrises.size == 0){
-                caseChoisie = moving(caseOptions, event);
+            if(this.casePrises.size == 0){
+                this.caseChoisie = this.moving(this.caseOptions, event);
+                
             } else {
-                caseChoisie = prise(casePrises, event);
+                this.caseChoisie = this.prise(this.casePrises, event);
             }
-            upgradePionToDame(getCurrentPosRow(caseChoisie), getCurrentColor(), getCurrentStatus(), tailleDamier);
-
+            this.upgradePionToDame(this.getCurrentPosRow(this.caseChoisie), this.getCurrentColor(), this.getCurrentStatus(), this.tailleDamier);
+         
         }
 
         //hotfix pour tout screen, correcteur de la position de souris
         //utile en cas de view box
-        function getMousePosition(event) {
+        getMousePosition(event) {
             let CTM = damier.getScreenCTM();
             //Si sur mobile
-            if (event.touches) {
+            if(event != undefined && event.touches){
                 event = event.touches[0];
             }
-            return {
-                x: (event.clientX - CTM.e) / CTM.a,
-                y: (event.clientY - CTM.f) / CTM.d
-            };
+            if(event != undefined ) {
+                return {
+                    x: (event.clientX - CTM.e) / CTM.a,
+                    y: (event.clientY - CTM.f) / CTM.d
+                };
+            }
         }
 
         //fonction permettant de proposer des cases jouables (tableau de <g></g>) selon
         // la couleur du pion, son sta                console.log("moncul");tut (pion ou dame), la position du pion courant cliqué
-        // return caseOptions[]
-        function calculCaseOptions(posRow, posCol, statusPion, colorPion) {
+        // return this.caseOptions[]
+        calculcaseOptions(posRow, posCol, statusPion, colorPion) {
             if(statusPion == 'pion'){
-                return comportementPion(posRow, posCol, colorPion);
+                return this.comportementPion(posRow, posCol, colorPion);
             } else if (statusPion == 'dame'){
-                return comportementDame(posRow, posCol, colorPion);
+                return this.comportementDame(posRow, posCol, colorPion);
             } else {
                 throw Error("Status spécifie incorrect");
             }
         }
 
-        function getPosX(selectedCase) {
+        getPosX(selectedCase) {
             return parseInt(selectedCase.querySelector('rect').getAttribute('x'));
         }
 
-        function getPosY(selectedCase) {
+        getPosY(selectedCase) {
             return parseInt(selectedCase.querySelector('rect').getAttribute('y'));
         }
 
-        function getCurrentPosRow(caseActive) {
-            return parseInt(caseActive.getAttribute('id').split("/")[0]);
+        getCurrentPosRow(caseActive) {
+            if(caseActive != undefined) {
+                return parseInt(caseActive.getAttribute('id').split("/")[0]);
+            }            
         }
 
-        function getCurrentPosCol(caseActive) {
-            return parseInt(caseActive.getAttribute('id').split("/")[1]);
+        getCurrentPosCol(caseActive) {
+            if(caseActive != undefined) {
+                return parseInt(caseActive.getAttribute('id').split("/")[1]);
+            }
         }
 
-        function getCurrentStatus() {
-            return selectedPion.classList[0];
+        getCurrentStatus() {
+            if(this.selectedPion != undefined) {
+                return this.selectedPion.classList[0];
+            }
         }
 
-        function getCurrentColor() {
-            return selectedPion.classList[1];
+        getCurrentColor() {
+            if(this.selectedPion != undefined) {
+                return this.selectedPion.classList[1];
+            }
         }
 
-        function comportementPion(posRow, posCol, colorPion) {
+        comportementPion(posRow, posCol, colorPion) {
             let caseOpt = [];
             let caseTake = new Map();
                 if (colorPion == 'white') {
@@ -233,7 +268,7 @@
                 }
         }
 
-        function comportementDame(posRow, posCol, colorPion){
+        comportementDame(posRow, posCol, colorPion){
             let caseOpt = [];
             let caseTake = new Map();
             let caseDestinationsPossibles = [];
@@ -343,21 +378,21 @@
         }
 
         //fonction de vérification et de passage d'un pion à une dame
-        function upgradePionToDame(posRow, colorPion, statusPion, tailleDamier){
+        upgradePionToDame(posRow, colorPion, statusPion, tailleDamier){
            let isUpgradable = false;
             if(statusPion == "pion"){
                 if(colorPion == 'black'){
                     if(posRow+1 == tailleDamier){
-                        selectedPion.setAttribute('class', 'dame black draggable');
-                        selectedPion.setAttributeNS(null, 'stroke', 'red');
-                        selectedPion.setAttributeNS(null, 'stroke-width', '4');
+                        this.selectedPion.setAttribute('class', 'dame black draggable');
+                        this.selectedPion.setAttributeNS(null, 'stroke', 'red');
+                        this.selectedPion.setAttributeNS(null, 'stroke-width', '4');
                         isUpgradable = true;
                     }
                 } else {
                     if(posRow == 0){
-                        selectedPion.setAttribute('class', 'dame white draggable');
-                        selectedPion.setAttributeNS(null, 'stroke', 'red');
-                        selectedPion.setAttributeNS(null, 'stroke-width', '4');
+                        this.selectedPion.setAttribute('class', 'dame white draggable');
+                        this.selectedPion.setAttributeNS(null, 'stroke', 'red');
+                        this.selectedPion.setAttributeNS(null, 'stroke-width', '4');
                         isUpgradable = true;
                     }
                 }
@@ -368,88 +403,201 @@
         }
 
 
-        function moving(caseOptions, event){
-            //Si la case Destination n'est pas authoriser alors elle reste par défaut la caseActive
-            let caseDestination = caseActive;
-            let mouseX = getMousePosition(event).x;
-            let mouseY = getMousePosition(event).y;
-            //si la personne relache le clic sans rien faire on efface au moins les indicateurs
-            for (let selectableCase of caseOptions) {
-                if(selectableCase.querySelector('.indicator')) {
-                    selectableCase.removeChild(selectableCase.querySelector('.indicator'));
+        moving(caseOptions, event){
+            if(event != undefined) {
+                let caseDestination = this.caseActive;
+                let mouseX = this.getMousePosition(event).x;
+                let mouseY = this.getMousePosition(event).y;
+                //si la personne relache le clic sans rien faire on efface au moins les indicateurs
+                for (let selectableCase of caseOptions) {
+                    if(selectableCase.querySelector('.indicator')) {
+                        selectableCase.removeChild(selectableCase.querySelector('.indicator'));
+                    }
+                    //si le release s'effectue au dessus d'une case authorisée
+                    if((this.getPosX(selectableCase)<=mouseX && this.getPosX(selectableCase)+49>=mouseX) && (this.getPosY(selectableCase)<=mouseY && this.getPosY(selectableCase)+49>=mouseY)){
+                        let clone = this.selectedPion.cloneNode();
+                        clone.setAttributeNS(null, 'cx', (this.getPosX(selectableCase) + 25).toString());
+                        clone.setAttributeNS(null, 'cy', (this.getPosY(selectableCase) + 25).toString());
+                        selectableCase.setAttribute('class', 'busy '+this.getCurrentColor());
+                        selectableCase.appendChild(clone);
+                        if(this.caseActive.contains(this.selectedPion)) {
+                            this.caseActive.removeChild(this.selectedPion);
+                            this.caseActive.setAttribute('class', 'free');
+                        }
+                        //la caseFestination devient la case selectionné (après vérification)
+                        caseDestination = selectableCase;
+                        // le pion selectionne devient le clone de son dépacement
+                        // nécessaire pour l'upgrade en dame
+                        this.selectedPion = clone;
+                        let event = new CustomEvent("move", { detail: { anciennePosition: this.caseActive.id, nouvellePosition: caseDestination.id } });
+                        let elm = document.getElementById("damier");
+                        elm.dispatchEvent(event);
+    
+                        console.log('move', this.tourJoueur);
+                        this.tourJoueur = (this.tourJoueur=="white" ? "black" : "white");
+                        document.getElementById("damier").style.border = "5px solid "+this.tourJoueur;
+                        console.log(this.tourJoueur)
+                    }
                 }
-                //si le release s'effectue au dessus d'une case authorisée
-                if((getPosX(selectableCase)<=mouseX && getPosX(selectableCase)+49>=mouseX) && (getPosY(selectableCase)<=mouseY && getPosY(selectableCase)+49>=mouseY)){
-                    let clone = selectedPion.cloneNode();
-                    clone.setAttributeNS(null, 'cx', (getPosX(selectableCase) + 25).toString());
-                    clone.setAttributeNS(null, 'cy', (getPosY(selectableCase) + 25).toString());
-                    selectableCase.setAttribute('class', 'busy '+getCurrentColor());
-                    selectableCase.appendChild(clone);
-                    caseActive.removeChild(selectedPion);
-                    caseActive.setAttribute('class', 'free');
-                    //la caseFestination devient la case selectionné (après vérification)
-                    caseDestination = selectableCase;
-                    // le pion selectionne devient le clone de son dépacement
-                    // nécessaire pour l'upgrade en dame
-                    selectedPion = clone;
-                }
+                return caseDestination;
             }
-            return caseDestination;
+            //Si la case Destination n'est pas authoriser alors elle reste par défaut la this.caseActive
         }
 
-        function prise(casePrises, event){
-            let caseDesti = caseActive
-            let mouseX = getMousePosition(event).x;
-            let mouseY = getMousePosition(event).y;
+        prise(casePrises, event){
+            let caseDesti = this.caseActive
+            let mouseX = this.getMousePosition(event).x;
+            let mouseY = this.getMousePosition(event).y;
             for (let [caseSaute, caseDestination] of casePrises){
-                if(getCurrentStatus() == 'pion'){
+                if(this.getCurrentStatus() == 'pion'){
                     if(caseDestination.querySelector('.indicatorPrise')) {
                         caseDestination.removeChild(caseDestination.querySelector('.indicatorPrise'));
                     }
                 
-                    if((getPosX(caseDestination)<=mouseX && getPosX(caseDestination)+49>=mouseX) && (getPosY(caseDestination)<=mouseY && getPosY(caseDestination)+49>=mouseY)){
-                        let clone = selectedPion.cloneNode();
-                        clone.setAttributeNS(null, 'cx', (getPosX(caseDestination) + 25).toString());
-                        clone.setAttributeNS(null, 'cy', (getPosY(caseDestination) + 25).toString());
-                        caseDestination.setAttribute('class', 'busy '+getCurrentColor());
+                    if((this.getPosX(caseDestination)<=mouseX && this.getPosX(caseDestination)+49>=mouseX) && (this.getPosY(caseDestination)<=mouseY && this.getPosY(caseDestination)+49>=mouseY)){
+                        let clone = this.selectedPion.cloneNode();
+                        clone.setAttributeNS(null, 'cx', (this.getPosX(caseDestination) + 25).toString());
+                        clone.setAttributeNS(null, 'cy', (this.getPosY(caseDestination) + 25).toString());
+                        caseDestination.setAttribute('class', 'busy '+this.getCurrentColor());
                         caseDestination.appendChild(clone);
-                        caseActive.removeChild(selectedPion);
-                        caseActive.setAttribute('class', 'free');
+                        this.caseActive.removeChild(this.selectedPion);
+                        this.caseActive.setAttribute('class', 'free');
                         //on mange le pion (pion ou dame) saute
                         caseSaute.removeChild(caseSaute.querySelector('.draggable'));
                         caseSaute.setAttribute('class', 'free');
                         //la caseFestination devient la case selectionné (après vérification)
                         caseDesti = caseDestination;
                         // nécessaire pour l'upgrade en dame
-                        selectedPion = clone;
+                        
+                        this.selectedPion = clone;
+
+                        let event = new CustomEvent("prise", { detail: { anciennePosition: this.caseActive.id, prise: caseSaute.id, nouvellePosition: caseDesti.id } });
+                        let elm = document.getElementById("damier");
+                        elm.dispatchEvent(event);
+                        
+                        this.casePrises = this.calculcaseOptions(this.getCurrentPosRow(caseDesti), this.getCurrentPosCol(caseDesti), this.getCurrentStatus(), this.getCurrentColor()).caseTake;
+                        //Si la prise de pion adverse est possible, elle est OBLIGATOIRE !
+                        if(this.casePrises.size == 0){
+                            this.tourJoueur = (this.tourJoueur=="white" ? "black" : "white");
+                            document.getElementById("damier").style.border = "5px solid "+this.tourJoueur;
+                        }
                     }
                 } else {
                     for(let cd of caseDestination){
                         cd.removeChild(cd.querySelector('.indicatorPrise'));
                         if((getPosX(cd)<=mouseX && getPosX(cd)+49>=mouseX) && (getPosY(cd)<=mouseY && getPosY(cd)+49>=mouseY)){
-                            let clone = selectedPion.cloneNode();
-                            clone.setAttributeNS(null, 'cx', (getPosX(cd) + 25).toString());
-                            clone.setAttributeNS(null, 'cy', (getPosY(cd) + 25).toString());
-                            cd.setAttribute('class', 'busy '+getCurrentColor());
+                            let clone = this.selectedPion.cloneNode();
+                            clone.setAttributeNS(null, 'cx', (this.getPosX(cd) + 25).toString());
+                            clone.setAttributeNS(null, 'cy', (this.getPosY(cd) + 25).toString());
+                            cd.setAttribute('class', 'busy '+this.getCurrentColor());
                             cd.appendChild(clone);
-                            caseActive.removeChild(selectedPion);
-                            caseActive.setAttribute('class', 'free');
+                            this.caseActive.removeChild(this.selectedPion);
+                            this.caseActive.setAttribute('class', 'free');
                             //on mange le pion saute
                             caseSaute.removeChild(caseSaute.querySelector('.draggable'));
                             caseSaute.setAttribute('class', 'free');
+                            
                             //la caseFestination devient la case selectionné (après vérification)
                             caseDesti = cd;
                             // nécessaire pour l'upgrade en dame
-                            selectedPion = clone;
+                            this.selectedPion = clone;
+
+                            let event = new CustomEvent("prise", { detail: { anciennePosition: this.caseActive.id, prise: caseSaute.id, nouvellePosition: caseDesti.id } });
+                            let elm = document.getElementById("damier");
+                            elm.dispatchEvent(event);
+                            
+                            this.casePrises = this.calculcaseOptions(this.getCurrentPosRow(caseDesti), this.getCurrentPosCol(caseDesti), this.getCurrentStatus(), this.getCurrentColor()).caseTake;
+                            //Si la prise de pion adverse est possible, elle est OBLIGATOIRE !
+                            if(this.casePrises.size == 0){
+                                this.tourJoueur = (this.tourJoueur=="white" ? "black" : "white");
+                                document.getElementById("damier").style.border = "5px solid "+this.tourJoueur;
+                            }
                         }
                     }
                 }
             }
             return caseDesti;
         }
+
+    moveAdverse(detailMove) {
+        let caseDepart = document.getElementById(detailMove.anciennePosition);
+        let caseArrive = document.getElementById(detailMove.nouvellePosition);
+        if (caseDepart.getElementsByTagName("circle")[0]) {
+            let clone = caseDepart.getElementsByTagName("circle")[0].cloneNode();
+            let colorPion = clone.getAttribute("class").split(' ')[1];
+            clone.setAttributeNS(null, 'cx', (this.getPosX(caseArrive) + 25).toString());
+            clone.setAttributeNS(null, 'cy', (this.getPosY(caseArrive) + 25).toString());
+            caseArrive.setAttribute('class', 'busy '+colorPion);
+            caseDepart.setAttribute('class', 'free');
+            caseDepart.removeChild(caseDepart.getElementsByTagName("circle")[0]);
+            let dame = this.upgradePionToDameAdverse(parseInt(caseArrive.getAttribute('id').split("/")[0]), colorPion, this.tailleDamier);
+            console.log(dame);
+            if (dame == true) {
+                clone.setAttribute('class', 'dame '+ colorPion + ' draggable');
+                clone.setAttributeNS(null, 'stroke', 'red');
+                clone.setAttributeNS(null, 'stroke-width', '4');
+            }
+            caseArrive.appendChild(clone);
+        }
+
+        this.tourJoueur = (this.tourJoueur=="white" ? "black" : "white");
+        document.getElementById("damier").style.border = "5px solid "+this.tourJoueur;
+        
     }
 
+    priseAdverse(detailMove) {
 
+        console.log("prise", detailMove)
+        let caseDepart = document.getElementById(detailMove.anciennePosition);
+        let caseSaute =  document.getElementById(detailMove.prise);
+        let caseArrive = document.getElementById(detailMove.nouvellePosition);
+        if (caseDepart.getElementsByTagName("circle")[0]) {
+            let clone = caseDepart.getElementsByTagName("circle")[0].cloneNode();
+            let colorPion = clone.getAttribute("class").split(' ')[1];
+            console.log(colorPion);
+            clone.setAttributeNS(null, 'cx', (this.getPosX(caseArrive) + 25).toString());
+            clone.setAttributeNS(null, 'cy', (this.getPosY(caseArrive) + 25).toString());
+            caseArrive.setAttribute('class', 'busy '+colorPion);
+            caseSaute.removeChild(caseSaute.getElementsByTagName("circle")[0]);
+            caseSaute.setAttribute('class', 'free');
+            caseDepart.setAttribute('class', 'free');
+            caseDepart.removeChild(caseDepart.getElementsByTagName("circle")[0]);
+            let dame = this.upgradePionToDameAdverse(parseInt(caseArrive.getAttribute('id').split("/")[0],colorPion, this.tailleDamier));
+            if (dame == true) {
+                clone.setAttribute('class', 'dame '+ colorPion + ' draggable');
+                clone.setAttributeNS(null, 'stroke', 'red');
+                clone.setAttributeNS(null, 'stroke-width', '4');
+            }
+            caseArrive.appendChild(clone);
+            let casePrises = this.calculcaseOptions(this.getCurrentPosRow(caseArrive), this.getCurrentPosCol(caseArrive), clone.classList[0], clone.classList[1]).caseTake;
+            //Si la prise de pion adverse est possible, elle est OBLIGATOIRE !
+            if(casePrises.size == 0){
+                this.tourJoueur = (this.tourJoueur=="white" ? "black" : "white");
+                document.getElementById("damier").style.border = "5px solid "+this.tourJoueur;
+            }
+        }
+        if(document.querySelector('.white') == null){
+            alert("Partie Terminée : Les Noirs ont gagnés !");
+        } else if (document.querySelector('.black') == null) {
+            alert("Partie Terminée : Les Blancs ont gagnés !");
+        }
+    }
+
+    upgradePionToDameAdverse(posRow, colorPion, tailleDamier){
+        let dame = false;
+        console.log(posRow, colorPion, tailleDamier);
+        if(colorPion == 'black'){console.log(posRow);
+            if(posRow+1 == tailleDamier){
+                dame = true;
+            }
+        } else {
+            if(posRow == 0){
+                dame = true;
+            }
+        }
+         return dame;
+     }
+}
 /*
     makeDraggable(event){
     var mySvg = event.target;

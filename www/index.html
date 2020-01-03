@@ -57,9 +57,17 @@
         <section id="displayMessage">
         </section>
 
+        <section id="gameType" style="display: none;">
+            <button id="onLine">Online</button>
+            <button id="vsIA">vs IA</button>
+            <button id="local">local</button>
+        </section>
+        
         <section id="game">
-            <svg height="1000" width="1000" id="damier" onload="makeDraggable(event)">
+            <p id="pseudoHaut" style="margin-left: 200px;"></p>
+            <svg height="500" width="500" id="damier">
             </svg>
+            <p id="pseudoBas" style="margin-left: 200px;"></p>
         </section>
 
         <section id="high-score">
@@ -70,14 +78,6 @@
 
         
 
-        <input type="text" name="message" id="message" placeholder="Votre message..." size="50" />
-        <button id="envoiMessage">Envoyer</button>
-
-        <section id="zone_chat">
-            
-        </section>
-
-        <script type="text/javascript" src="cordova.js"></script>
         <!-- lien vers le fichier client socket.io.js du module pour réaliser la communication entre le client et le serveur-->
         <script type="text/javascript" src="js/socket.io.js"></script>
         <script type="text/javascript" src="js/login.js"></script>

@@ -32,14 +32,12 @@ var app = {
     
 
         var login = new log(); 
-        
+        var jeu;
+        let pseudo;
         // on se connecte sur le port 28400 (notre serveur node) quand le device est pret
         var socket = io.connect('http://localhost:28400');
-     
-        // Quand on reçoit un message (d'une autre personne), on l'insère dans la page
-        socket.on('message', function(data) {
-            insereMessage(data.message);
-        })
+
+        var gameType="";
 
         var formulaire = document.getElementById("formConnexion");
 
@@ -50,41 +48,74 @@ var app = {
             return false;
         };
 
+        document.getElementById("onLine").onclick = function() {
+            socket.emit('nouveau_client', {socketId: socket.id, pseudo: pseudo});
+            gameType = "onLine";
+        }
+
+        document.getElementById("vsIA").onclick = function() {
+            
+        }
+
+        document.getElementById("local").onclick = function() {
+            
+        }
+
         socket.on("mauvaisMDP", function() {
             login.mauvaisMDP();
         });
-        socket.on('connexionSuccess', function() {
+        socket.on('connexionSuccess', function(data) {
             login.connexionSuccess();
-            socket.emit('nouveau_client', socket.id);
+            pseudo=data.pseudo;
         });
 
         socket.on('waitingAdversaire', function() {
             login.waitingScreen();
         });
 
-        socket.on('findAdversaire', function() {
+        socket.on('findAdversaire', function(data) {
             console.log("find adversaire");
-            login.findAdversaire();
+            login.findAdversaire(data);
+            let couleurJoueur;
+            for (let prop in data) { 
+                if (data.hasOwnProperty(prop)) { 
+                    if (data[prop] === pseudo) 
+                    couleurJoueur = prop;
+                } 
+            } 
+            console.log("slt", couleurJoueur)
+            //refresh du damier :
+            jeu = new Game(gameType, couleurJoueur);
+            
+           
+        });
+          
+        socket.on("deconnexionAdversaire", function() {
+            alert("Votre adversaire s'est déconnecté");
+            login.adversaireDeco();
         });
 
-    
-        // détection du click sur le bouton Envoyer signalant qu'un message a été envoyé
-        document.getElementById('envoiMessage').onclick = function() {
-            var message = document.getElementById('message').value;
-            socket.emit('message', message, socket.id); // Transmet le message à son duo (retrouvé par le serveur)
-            insereMessage(message);
-            document.getElementById('message').value='';
-        };
-            
-        socket.on("deconnexionAdversaire", function(data) {
-            console.log("adv deco");
-        })
-        // Ajoute un message dans la page
-        function insereMessage(message) {
-            var p = document.createElement("p");
-            p.innerHTML = message;
-            document.getElementById('zone_chat').appendChild(p);
-        }  
+        let elm = document.getElementById("damier");
+        elm.addEventListener("prise", function(event) {
+            socket.emit("priseAdverse", event.detail, socket.id);
+            console.log(event.detail);
+        });
+        elm.addEventListener("move", function(event) {
+            if(document.getElementById(event.detail.nouvellePosition).classList.contains(jeu.couleurJoueur)) {
+                socket.emit("moveAdverse", event.detail, socket.id);
+            }
+            console.log(event.detail);
+        });
+          
+        socket.on("priseAdverse", function(data) {
+            console.log(data.detailPrise);
+            jeu.priseAdverse(data.detailPrise);
+        });
+
+        socket.on("moveAdverse", function(data) {
+            console.log(data.detailMove);
+            jeu.moveAdverse(data.detailMove);
+        });
     },
     startGame: function () {
         //game = new Game();

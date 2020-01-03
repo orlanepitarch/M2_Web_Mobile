@@ -8,7 +8,7 @@ class log {
         if (document.getElementById('displayMessage').childElementCount == 1 ) {
             document.getElementById('displayMessage').removeChild(document.getElementById('mauvaisMDP'));
         }
-        
+        document.getElementById('gameType').style.display = "block";
     }
     
     waitingScreen() {
@@ -16,10 +16,12 @@ class log {
         p.id = "waiting"
         p.innerHTML = "En attente d'un adversaire";
         document.getElementById('displayMessage').appendChild(p);
+        document.getElementById('gameType').style.display = "none";
     }
     
-    findAdversaire(){
+    findAdversaire(data){
         var p = document.createElement("p");
+        p.id = "adversaire";
         p.innerHTML = "Adversaire trouvé";
         if (document.getElementById('displayMessage').childElementCount == 1 ) {
             if(document.getElementById("waiting") != null) {
@@ -27,7 +29,19 @@ class log {
             }
         }
         document.getElementById('displayMessage').appendChild(p);
-        
+        document.getElementById('pseudoHaut').innerText = data.black;
+        document.getElementById('pseudoBas').innerText = data.white;
+        document.getElementById('gameType').style.display = "none";
+    }
+
+    adversaireDeco() {
+        if (document.getElementById('displayMessage').childElementCount == 1 ) {
+            if(document.getElementById("adversaire") != null) {
+                document.getElementById('displayMessage').removeChild(document.getElementById("adversaire"));
+                document.getElementById('pseudoHaut').innerText = "";
+                document.getElementById('pseudoBas').innerText = "";
+            }
+        }
     }
 
     mauvaisMDP() {
