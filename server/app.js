@@ -12,10 +12,12 @@ io.sockets.on('connection', function (socket) {
 
     socket.on('disconnect', function () {
         if (socket.id in duoID) {
-            socket.to(duoID[socket.id]).emit('deconnexionAdversaire', {message: "message"});
-            waitingUser.push(duoID[socket.id]);
+            socket.to(duoID[socket.id]).emit('deconnexionAdversaire');
+            waitingUser.push({socketId: duoID[socket.id], pseudo: duoPseudo[socket.id]});
             delete duoID[duoID[socket.id]];
             delete duoID[socket.id];
+            delete duoPseudo[duoID[socket.id]];
+            delete duoPseudo[socket.id];
         }
         else {
             waitingUser = waitingUser.filter(function(player){
@@ -47,9 +49,9 @@ io.sockets.on('connection', function (socket) {
             var aLier=waitingUser[0];
             waitingUser = waitingUser.slice(1);
             duoID[aLier.socketId] = socketID;
-            duoPseudo[aLier.pseudo] = pseudo;
+            duoPseudo[aLier.socketId] = pseudo;
             duoID[socketID] = aLier.socketId;
-            duoPseudo[pseudo] = aLier.pseudo;
+            duoPseudo[socketID] = aLier.pseudo;
             socket.emit('findAdversaire', {white: aLier.pseudo, black: pseudo});
             socket.to(aLier.socketId).emit('findAdversaire', {white: aLier.pseudo, black: pseudo});
         }
