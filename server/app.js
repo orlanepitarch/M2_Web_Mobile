@@ -21,7 +21,7 @@ io.sockets.on('connection', function (socket) {
         }
         else {
             waitingUser = waitingUser.filter(function(player){
-                return player != socket.id;
+                return player.socketId != socket.id;
             });
         }
         console.log('socket disconnected');
@@ -61,6 +61,12 @@ io.sockets.on('connection', function (socket) {
         }
     });
 
+    socket.on("cancelMatchMaking", function() {
+        waitingUser = waitingUser.filter(function(player){
+            return player.socketId != socket.id;
+        });
+    });
+
     socket.on('priseAdverse', function(detailPrise, socketID) {
         socket.to(duoID[socketID]).emit('priseAdverse', {detailPrise: detailPrise});
     });
@@ -69,6 +75,9 @@ io.sockets.on('connection', function (socket) {
         socket.to(duoID[socketID]).emit('moveAdverse', {detailMove: detailMove});
     });
     
+    socket.on("win", function(couleurGagnante) {
+        console.log(couleurGagnante + "ont gagné");
+    })
 });
 
 // port défini arbitrairement (28400 pour éviter les conflits avec les ports fréquemment utilisés)

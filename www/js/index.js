@@ -60,9 +60,21 @@ var app = {
             jeu = new Game(gameType, "white");
         }
 
+        document.getElementById("cancelMatchMaking").onclick = function() {
+            socket.emit('cancelMatchMaking');
+            document.getElementById('gameType').style.display = "block";
+            if (document.getElementById('displayMessage').childElementCount == 1 ) {
+                if(document.getElementById("waiting") != null) {
+                    document.getElementById('displayMessage').removeChild(document.getElementById("waiting"));
+                }
+            }
+            document.getElementById("cancelMatchMaking").style.display = "none";
+        }
+
         socket.on("mauvaisMDP", function() {
             login.mauvaisMDP();
         });
+
         socket.on('connexionSuccess', function(data) {
             login.connexionSuccess();
             pseudo=data.pseudo;
@@ -83,7 +95,15 @@ var app = {
             } 
             //refresh du damier :
             jeu = new Game(gameType, couleurJoueur);
-            alert("Vous jouez les pions "+couleurJoueur);
+            
+            let joueur;
+            if(couleurJoueur == "black") {
+                joueur = "noirs";
+            }
+            else {
+                joueur = "blancs";
+            }
+            alert("Vous jouez les pions "+joueur);
             
            
         });
@@ -103,6 +123,9 @@ var app = {
                 socket.emit("moveAdverse", event.detail, socket.id);
             }
             console.log(event.detail);
+        });
+        elm.addEventListener("win", function(event) {
+            socket.emit("win", event.detail.couleurJoueur);
         });
           
         socket.on("priseAdverse", function(data) {

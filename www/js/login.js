@@ -12,21 +12,23 @@ class log {
     }
     
     waitingScreen() {
-        var p = document.createElement("p");
+        let p = document.createElement("p");
         p.id = "waiting"
         p.innerHTML = "En attente d'un adversaire";
+        document.getElementById("cancelMatchMaking").style.display = "block";
         document.getElementById('displayMessage').appendChild(p);
         document.getElementById('gameType').style.display = "none";
     }
     
     findAdversaire(data){
-        var p = document.createElement("p");
+        let p = document.createElement("p");
         p.id = "adversaire";
         p.innerHTML = "Adversaire trouvé";
         if (document.getElementById('displayMessage').childElementCount == 1 ) {
             if(document.getElementById("waiting") != null) {
                 document.getElementById('displayMessage').removeChild(document.getElementById("waiting"));
             }
+            document.getElementById("cancelMatchMaking").style.display = "none";
         }
         document.getElementById('displayMessage').appendChild(p);
         document.getElementById('pseudoHaut').innerText = data.black;
@@ -42,6 +44,7 @@ class log {
                 document.getElementById('pseudoBas').innerText = "";
             }
         }
+        this.waitingScreen();
     }
 
     mauvaisMDP() {
