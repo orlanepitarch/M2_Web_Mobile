@@ -57,7 +57,13 @@ var app = {
         document.getElementById("local").onclick = function() {
             gameType = "local";
             document.getElementById('gameType').style.display = "none";
+            document.getElementById('cancelLocal').style.display = "block";
             jeu = new Game(gameType, "white");
+        }
+
+        document.getElementById('cancelLocal').onclick = function() {
+            document.getElementById('cancelLocal').style.display = "none";
+            login.accueil();
         }
 
         document.getElementById("cancelMatchMaking").onclick = function() {

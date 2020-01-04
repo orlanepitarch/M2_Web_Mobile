@@ -97,19 +97,36 @@ class Game {
         } else if (this.casePrises.size != 0 && this.tourJoueur == this.couleurJoueur){
             this.caseChoisie = this.prise(this.casePrises, event);
             if(document.querySelector('.white') == null){
-                alert("Partie Terminée : Les Noirs ont gagnés !");
                 if(this.gameType == "onLine") {
                     let event = new CustomEvent("win", { detail: { couleurJoueur: "black"} });
                     let elm = document.getElementById("damier");
                     elm.dispatchEvent(event);
+                } else {
+                    let result = confirm("Partie Terminée : Les Noirs ont gagnés ! Voulez-vous rejouer ?");
+                    if(result) {
+                        new Game("local", "white");
+                    }
+                    else {
+                        document.getElementById('cancelLocal').style.display = "none";
+                    login.accueil();
+                    }
                 }
                 console.log('win', "black");
             } else if (document.querySelector('.black') == null) {
-                alert("Partie Terminée : Les Blancs ont gagnés !");
                 if(this.gameType == "onLine") {
                     let event = new CustomEvent("win", { detail: { couleurJoueur: "white"} });
                     let elm = document.getElementById("damier");
                     elm.dispatchEvent(event);
+                }
+                else {
+                     let result = confirm("Partie Terminée : Les Blancs ont gagnés ! Voulez-vous rejouer ?");
+                    if(result) {
+                        new Game("local", "white");
+                    }
+                    else {
+                        document.getElementById('cancelLocal').style.display = "none";
+                        login.accueil();
+                    }
                 }
                 console.log('win white');
             }
@@ -607,13 +624,11 @@ class Game {
             }
         }
         if(document.querySelector('.white') == null){
-            alert("Partie Terminée : Les Noirs ont gagnés !");
             let event = new CustomEvent("win", { detail: { couleurJoueur: "black"} });
             let elm = document.getElementById("damier");
             elm.dispatchEvent(event);
             
         } else if (document.querySelector('.black') == null) {
-            alert("Partie Terminée : Les Blancs ont gagnés !");
             let event = new CustomEvent("win", { detail: { couleurJoueur: "white"} });
             let elm = document.getElementById("damier");
             elm.dispatchEvent(event);
