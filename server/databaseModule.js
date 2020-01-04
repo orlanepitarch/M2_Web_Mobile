@@ -1,7 +1,5 @@
-var app = require('express')();
-var http = require('http').createServer(app);
-var io = require('socket.io')(http);
 var mongoose = require('mongoose');
+var bcrypt = require('bcryptjs');
 
 mongoose.connect('mongodb://127.0.0.1:27017/JeuDeDame', {useNewUrlParser: true, useUnifiedTopology: true});
 var db = mongoose.connection;
@@ -94,8 +92,9 @@ var Game = mongoose.model('Game', gameSchema);
  * @param {string} Ppassword - a password
  */
 
-function addAPlayer(Ppseudo, Prating, Ppassword){
-    var newPlayer = new Player({pseudo: Ppseudo, rating:Prating, password:Ppassword });
+async function addAPlayer(Ppseudo, Prating, Ppassword){
+    let hashPassword = await bcrypt.hashSync(Ppassword, 8);
+    let newPlayer = new Player({pseudo: Ppseudo, rating: Prating, password: hashPassword });
     newPlayer.save(function (err) {
         if (err) { throw err; }
         else{
@@ -136,8 +135,7 @@ function addAPlayer(Ppseudo, Prating, Ppassword){
  async function findAPlayerByPseudo(thePlayerPseudo, password){
   const user = await Player.findOne({pseudo: thePlayerPseudo});
   if (user) {
-    const user = await Player.findOne({pseudo: thePlayerPseudo, password: password});
-    if (user){
+    if (await bcrypt.compare(password, user.password)){
       return user;
     }
     //mdp faux :
