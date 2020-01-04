@@ -29,7 +29,7 @@ class Damier{
     }
     drawDamierSvg(){
         let svg = document.querySelector('#damier');
-        let colorVerifier = '#4b170d'; //variable temporaire permettant de permuter la couleur d'une case sur 2
+        let colorVerifier = '#a2762a'; //variable temporaire permettant de permuter la couleur d'une case sur 2
         //contruction damier dynamique
         for (let i = 0 ; i < this.taille ; i++) {
             for (let j = 0; j < this.taille; j++) {
@@ -45,8 +45,8 @@ class Damier{
                 //si la taille du damier et pair ou impair
                 if(this.taille%2 == 1){
                     if(colorVerifier == '#e5ca9a'){
-                        colorVerifier = '#4b170d';
-                        caseSvg.setAttributeNS(null, 'fill', '#4b170d');
+                        colorVerifier = '#a2762a';
+                        caseSvg.setAttributeNS(null, 'fill', '#a2762a');
                     } else {
                         colorVerifier = '#e5ca9a';
                         caseSvg.setAttributeNS(null, 'fill', '#e5ca9a');
@@ -56,12 +56,12 @@ class Damier{
                          if(j == this.taille-1){
                              colorVerifier = '#e5ca9a';
                          } else {
-                             colorVerifier = '#4b170d';
+                             colorVerifier = '#a2762a';
                          }
-                        caseSvg.setAttributeNS(null, 'fill', '#4b170d');
+                        caseSvg.setAttributeNS(null, 'fill', '#a2762a');
                     } else {
                          if(j == this.taille-1){
-                             colorVerifier = '#4b170d';
+                             colorVerifier = '#a2762a';
                          } else {
                              colorVerifier = '#e5ca9a';
                          }
@@ -95,7 +95,7 @@ class Damier{
                     //Si le parent n'est pas une case de couleur foncé, il est inutile de créer un pion
                     let parental = document.getElementById(j.toString()+'/'+i.toString());
                     let caseCourante = parental.querySelector('rect');
-                    if(caseCourante.getAttribute("fill") == '#4b170d'){
+                    if(caseCourante.getAttribute("fill") == '#a2762a'){
                         let pionSvg = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
                         if(j==0 || j==1 || j==2 || j==3){
                             //on indique la nature du pion (pion) et son camp (black or white) ainsi que le fait
