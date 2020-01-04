@@ -15,6 +15,7 @@ class Game {
         this.tourJoueur = "white";
         console.log("Joueur "+this.tourJoueur);
         document.getElementById("damier").style.border = "5px solid white";
+        this.gameType = gameType;
     
     
         //let this.tailleDamier = prompt("Veuillez choisir la taille de votre damier (valeur minimale 6) :")
@@ -106,8 +107,20 @@ class Game {
                 this.caseChoisie = this.prise(this.casePrises, event);
                 if(document.querySelector('.white') == null){
                     alert("Partie Terminée : Les Noirs ont gagnés !");
+                    if(this.gameType == "onLine") {
+                        let event = new CustomEvent("win", { detail: { couleurJoueur: "black"} });
+                        let elm = document.getElementById("damier");
+                        elm.dispatchEvent(event);
+                    }
+                    console.log('win', "black");
                 } else if (document.querySelector('.black') == null) {
                     alert("Partie Terminée : Les Blancs ont gagnés !");
+                    if(this.gameType == "onLine") {
+                        let event = new CustomEvent("win", { detail: { couleurJoueur: "white"} });
+                        let elm = document.getElementById("damier");
+                        elm.dispatchEvent(event);
+                    }
+                    console.log('win white');
                 }
             }
             this.upgradePionToDame(this.getCurrentPosRow(this.caseChoisie), this.getCurrentColor(), this.getCurrentStatus(), this.tailleDamier);
@@ -427,7 +440,7 @@ class Game {
                         // le pion selectionne devient le clone de son dépacement
                         // nécessaire pour l'upgrade en dame
                         this.selectedPion = clone;
-                        if(gameType == "onLine") {
+                        if(this.gameType == "onLine") {
                             let event = new CustomEvent("move", { detail: { anciennePosition: this.caseActive.id, nouvellePosition: caseDestination.id } });
                             let elm = document.getElementById("damier");
                             elm.dispatchEvent(event);
@@ -436,7 +449,7 @@ class Game {
                         }
                         
                         this.tourJoueur = (this.tourJoueur=="white" ? "black" : "white");
-                        if(gameType != "onLine") {
+                        if(this.gameType != "onLine") {
                             this.couleurJoueur = (this.couleurJoueur=="white" ? "black" : "white");
                         }
                         document.getElementById("damier").style.border = "5px solid "+this.tourJoueur;
@@ -477,7 +490,7 @@ class Game {
                         
                         this.selectedPion = clone;
 
-                        if(gameType == "onLine") {
+                        if(this.gameType == "onLine") {
                             let event = new CustomEvent("prise", { detail: { anciennePosition: this.caseActive.id, prise: caseSaute.id, nouvellePosition: caseDesti.id } });
                             let elm = document.getElementById("damier");
                             elm.dispatchEvent(event);
@@ -488,7 +501,7 @@ class Game {
                         //Si la prise de pion adverse est possible, elle est OBLIGATOIRE !
                         if(this.casePrises.size == 0){
                             this.tourJoueur = (this.tourJoueur=="white" ? "black" : "white");
-                            if(gameType != "onLine") {
+                            if(this.gameType != "onLine") {
                                 this.couleurJoueur = (this.couleurJoueur=="white" ? "black" : "white");
                             }
                             document.getElementById("damier").style.border = "5px solid "+this.tourJoueur;
@@ -516,7 +529,7 @@ class Game {
                             // nécessaire pour l'upgrade en dame
                             this.selectedPion = clone;
 
-                            if(gameType == "onLine") {
+                            if(this.gameType == "onLine") {
                                 let event = new CustomEvent("prise", { detail: { anciennePosition: this.caseActive.id, prise: caseSaute.id, nouvellePosition: caseDesti.id } });
                                 let elm = document.getElementById("damier");
                                 elm.dispatchEvent(event);
@@ -527,7 +540,7 @@ class Game {
                             //Si la prise de pion adverse est possible, elle est OBLIGATOIRE !
                             if(this.casePrises.size == 0){
                                 this.tourJoueur = (this.tourJoueur=="white" ? "black" : "white");
-                                if(gameType != "onLine") {
+                                if(this.gameType != "onLine") {
                                     this.couleurJoueur = (this.couleurJoueur=="white" ? "black" : "white");
                                 }
                                 document.getElementById("damier").style.border = "5px solid "+this.tourJoueur;
@@ -598,8 +611,17 @@ class Game {
         }
         if(document.querySelector('.white') == null){
             alert("Partie Terminée : Les Noirs ont gagnés !");
+            let event = new CustomEvent("win", { detail: { couleurJoueur: "black"} });
+            let elm = document.getElementById("damier");
+            elm.dispatchEvent(event);
+            console.log('win black');
+            
         } else if (document.querySelector('.black') == null) {
             alert("Partie Terminée : Les Blancs ont gagnés !");
+            let event = new CustomEvent("win", { detail: { couleurJoueur: "white"} });
+            let elm = document.getElementById("damier");
+            elm.dispatchEvent(event);
+            console.log('win', "white");
         }
     }
 
