@@ -5,6 +5,7 @@ var duoPseudo = {};
 var waitingUser = new Array();
 
 var login = require("./login");
+var gameManagement = require("./gameManagement");
 
 io.sockets.on('connection', function (socket) {
     console.log('socket connected');
@@ -67,12 +68,14 @@ io.sockets.on('connection', function (socket) {
         });
     });
 
-    socket.on('priseAdverse', function(detailPrise, socketID) {
-        socket.to(duoID[socketID]).emit('priseAdverse', {detailPrise: detailPrise});
+    socket.on('priseAdverse', function(detailPrise, tailleJeu, socketID) {
+        let detailInverse = gameManagement.inversePositionPrise(detailPrise, tailleJeu);
+        socket.to(duoID[socketID]).emit('priseAdverse', {detailPrise: detailInverse});
     });
 
-    socket.on('moveAdverse', function(detailMove, socketID) {
-        socket.to(duoID[socketID]).emit('moveAdverse', {detailMove: detailMove});
+    socket.on('moveAdverse', function(detailMove, tailleJeu, socketID) {
+        let detailInverse = gameManagement.inversePositionMove(detailMove, tailleJeu);
+        socket.to(duoID[socketID]).emit('moveAdverse', {detailMove: detailInverse});
     });
     
     socket.on("win", function(dataClient) {

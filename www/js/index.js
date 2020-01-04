@@ -33,7 +33,7 @@ var app = {
         let pseudo;
         // on se connecte sur le port 28400 (notre serveur node) quand le device est pret
         var socket = io.connect('http://localhost:28400');
-        new Damier(10);
+        new Damier(10,"white");
         var gameType="";
 
         var formulaire = document.getElementById("formConnexion");
@@ -121,12 +121,10 @@ var app = {
 
         let elm = document.getElementById("damier");
         elm.addEventListener("prise", function(event) {
-            socket.emit("priseAdverse", event.detail, socket.id);
+            socket.emit("priseAdverse", event.detail, jeu.tailleDamier, socket.id);
         });
         elm.addEventListener("move", function(event) {
-            if(document.getElementById(event.detail.nouvellePosition).classList.contains(jeu.couleurJoueur)) {
-                socket.emit("moveAdverse", event.detail, socket.id);
-            }
+            socket.emit("moveAdverse", event.detail, jeu.tailleDamier, socket.id);
         });
         elm.addEventListener("win", function(event) {
             socket.emit("win", {couleur: event.detail.couleurJoueur, pseudo: pseudo, socketID: socket.id});
@@ -156,6 +154,8 @@ var app = {
         });
 
         socket.on("moveAdverse", function(data) {
+            console.log("move adv")
+            console.log(data.detailMove)
             jeu.moveAdverse(data.detailMove);
         });
     }

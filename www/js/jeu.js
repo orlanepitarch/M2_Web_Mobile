@@ -19,7 +19,7 @@ class Game {
     
     
         //let this.tailleDamier = prompt("Veuillez choisir la taille de votre damier (valeur minimale 6) :")
-        new Damier(this.tailleDamier);
+        new Damier(this.tailleDamier, this.couleurJoueur);
         this.makeDraggable(document.getElementById("damier"));
     }
     
@@ -45,14 +45,19 @@ class Game {
     }
     
     clickedPion(event) {
+        console.log("Joueur "+this.couleurJoueur);
+        console.log("tour :"+this.tourJoueur);
+        console.log("contient ?", event.target.classList.contains(this.couleurJoueur))
         if (event.target.classList.contains('draggable') && this.tourJoueur==this.couleurJoueur && event.target.classList.contains(this.couleurJoueur)) {                   
             this.selectedPion = event.target;
+            console.log(this.selectedPion);
             this.caseActive = this.selectedPion.parentNode;
             this.caseOptions = this.calculcaseOptions(this.getCurrentPosRow(this.caseActive), this.getCurrentPosCol(this.caseActive), this.getCurrentStatus(), this.getCurrentColor()).caseOpt;
             this.casePrises = this.calculcaseOptions(this.getCurrentPosRow(this.caseActive), this.getCurrentPosCol(this.caseActive), this.getCurrentStatus(), this.getCurrentColor()).caseTake;
 
             //Si la prise de pion adverse est possible, elle est OBLIGATOIRE !
             if(this.casePrises.size == 0){
+                
                 for (let selectableCase of this.caseOptions) {
                     let coloredIndicatorOfMoving = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
                     coloredIndicatorOfMoving.setAttributeNS(null, 'r', '9');
@@ -199,6 +204,8 @@ class Game {
     comportementPion(posRow, posCol, colorPion) {
         let caseOpt = [];
         let caseTake = new Map();
+        let adverseColor = colorPion == "white" ? "black" : "white";
+        if(this.gameType == "local") {
             if (colorPion == 'white') {
                 let caseLeft = document.getElementById((posRow - 1) + '/' + (posCol - 1));
                 let caseRight = document.getElementById((posRow - 1) + '/' + (posCol + 1));
@@ -284,6 +291,49 @@ class Game {
             } else {
                 throw Error('La couleur du pion selectionné n\'existe pas');
             }
+        } else {
+            let caseLeft = document.getElementById((posRow - 1) + '/' + (posCol - 1));
+            let caseRight = document.getElementById((posRow - 1) + '/' + (posCol + 1));
+            let caseBackRight = document.getElementById((posRow + 1) + '/' + (posCol + 1));
+            let caseBackLeft = document.getElementById((posRow + 1) + '/' + (posCol - 1));
+            if (caseLeft != null && caseLeft.classList.contains('free')) {
+                caseOpt.push(caseLeft);
+            }
+            if (caseRight != null && caseRight.classList.contains('free')) {
+                caseOpt.push(caseRight);
+            }
+            //Si les cases droites / gauches / arrDroite / arrGauche sont occupés par l'adversaire,
+            //On vérifie que l'on peut damer le pion
+            if (caseLeft != null && caseLeft.classList.contains(adverseColor)) {
+                let casePriseAdvLeft = document.getElementById((posRow - 2) + '/' + (posCol - 2));
+                if (casePriseAdvLeft != null && casePriseAdvLeft.classList.contains('free')) {
+                    caseTake.set(caseLeft, casePriseAdvLeft);
+                }
+            }
+            if (caseRight != null && caseRight.classList.contains(adverseColor)) {
+                let casePriseAdvRight = document.getElementById((posRow - 2) + '/' + (posCol + 2));
+                if (casePriseAdvRight != null && casePriseAdvRight.classList.contains('free')) {
+                    caseTake.set(caseRight, casePriseAdvRight);
+                }
+            }
+            if (caseBackLeft != null && caseBackLeft.classList.contains(adverseColor)) {
+                let casePriseAdvBackLeft = document.getElementById((posRow + 2) + '/' + (posCol - 2));
+                if (casePriseAdvBackLeft != null && casePriseAdvBackLeft.classList.contains('free')) {
+                    caseTake.set(caseBackLeft, casePriseAdvBackLeft);
+                }
+            }
+            if (caseBackRight != null && caseBackRight.classList.contains(adverseColor)) {
+                let casePriseAdvBackRight = document.getElementById((posRow + 2) + '/' + (posCol + 2));
+                if (casePriseAdvBackRight != null && casePriseAdvBackRight.classList.contains('free')) {
+                    caseTake.set(caseBackRight, casePriseAdvBackRight);
+                }
+            }
+            return {
+                caseOpt,
+                caseTake
+            }
+        }
+            
     }
 
     comportementDame(posRow, posCol, colorPion){
@@ -293,7 +343,7 @@ class Game {
         let adverseColor = colorPion == 'black' ? 'white' : 'black';
 
         //déplacemement possibles
-        //diag left
+        //diag back left
         let i = 1;
         while(document.getElementById((posRow+i)+'/'+(posCol-i)) != null){
             if (document.getElementById((posRow+i)+'/'+(posCol-i)).classList.contains('free')){
@@ -317,7 +367,7 @@ class Game {
             i++;
         }
         //déplacemement possibles
-        //diag right
+        //diag back right
         caseDestinationsPossibles = [];
         i = 1;
         while(document.getElementById((posRow+i)+'/'+(posCol+i)) != null){
@@ -342,7 +392,7 @@ class Game {
             i++;
         }
 
-        //diag back left
+        //diag left
         caseDestinationsPossibles = [];
         i = 1;
         while(document.getElementById((posRow-i)+'/'+(posCol-i)) != null){
@@ -366,6 +416,7 @@ class Game {
             }
             i++;
         }
+        //diag right
         caseDestinationsPossibles = [];
         i = 1;
         while(document.getElementById((posRow-i)+'/'+(posCol+i)) != null){
@@ -392,21 +443,32 @@ class Game {
         return {
             caseOpt,
             caseTake
-        }
+        }       
+        
     }
 
     //fonction de vérification et de passage d'un pion à une dame
     upgradePionToDame(posRow, colorPion, statusPion, tailleDamier){
         let isUpgradable = false;
         if(statusPion == "pion"){
-            if(colorPion == 'black'){
-                if(posRow+1 == tailleDamier){
-                    this.selectedPion.setAttribute('class', 'dame black draggable');
-                    this.selectedPion.setAttributeNS(null, 'stroke', 'red');
-                    this.selectedPion.setAttributeNS(null, 'stroke-width', '4');
-                    isUpgradable = true;
+            if (this.gameType == "local") {
+                if(colorPion == 'black'){
+                    if(posRow+1 == tailleDamier){
+                        this.selectedPion.setAttribute('class', 'dame black draggable');
+                        this.selectedPion.setAttributeNS(null, 'stroke', 'red');
+                        this.selectedPion.setAttributeNS(null, 'stroke-width', '4');
+                        isUpgradable = true;
+                    }
+                } else {
+                    if(posRow == 0){
+                        this.selectedPion.setAttribute('class', 'dame '+this.couleurJoueur+' draggable');
+                        this.selectedPion.setAttributeNS(null, 'stroke', 'red');
+                        this.selectedPion.setAttributeNS(null, 'stroke-width', '4');
+                        isUpgradable = true;
+                    }
                 }
-            } else {
+            }
+            else {
                 if(posRow == 0){
                     this.selectedPion.setAttribute('class', 'dame white draggable');
                     this.selectedPion.setAttributeNS(null, 'stroke', 'red');
@@ -414,6 +476,7 @@ class Game {
                     isUpgradable = true;
                 }
             }
+           
         } else {
             isUpgradable = false;
         }
@@ -637,12 +700,12 @@ class Game {
 
     upgradePionToDameAdverse(posRow, colorPion, tailleDamier){
         let dame = false;
-        if(colorPion == 'black'){
-            if(posRow+1 == tailleDamier){
+        if(colorPion == this.couleurJoueur){
+            if(posRow == 0){
                 dame = true;
             }
         } else {
-            if(posRow == 0){
+            if(posRow+1 == tailleDamier){
                 dame = true;
             }
         }

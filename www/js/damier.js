@@ -1,6 +1,6 @@
 class Damier{
 
-    constructor(taille) {
+    constructor(taille, couleurJoueur) {
         this.taille = taille;
         /*let damier = new Array(taille);
 
@@ -16,6 +16,7 @@ class Damier{
             }
         }
     */
+        this.couleurBas = couleurJoueur;
         this.removeOldDamier();
         this.drawDamierSvg();
         this.drawPionSvg();
@@ -29,7 +30,7 @@ class Damier{
     }
     drawDamierSvg(){
         let svg = document.querySelector('#damier');
-        let colorVerifier = '#a2762a'; //variable temporaire permettant de permuter la couleur d'une case sur 2
+        let colorVerifier = "white"; //variable temporaire permettant de permuter la couleur d'une case sur 2
         //contruction damier dynamique
         for (let i = 0 ; i < this.taille ; i++) {
             for (let j = 0; j < this.taille; j++) {
@@ -44,26 +45,26 @@ class Damier{
                 //datermine la couleur d'une case selon
                 //si la taille du damier et pair ou impair
                 if(this.taille%2 == 1){
-                    if(colorVerifier == '#e5ca9a'){
-                        colorVerifier = '#a2762a';
+                    if(colorVerifier == 'black'){
+                        colorVerifier = 'white';
                         caseSvg.setAttributeNS(null, 'fill', '#a2762a');
                     } else {
-                        colorVerifier = '#e5ca9a';
+                        colorVerifier = 'black';
                         caseSvg.setAttributeNS(null, 'fill', '#e5ca9a');
                     }
                 } else {
-                     if(colorVerifier == '#e5ca9a'){
+                     if(colorVerifier == 'black'){
                          if(j == this.taille-1){
-                             colorVerifier = '#e5ca9a';
+                             colorVerifier = 'black';
                          } else {
-                             colorVerifier = '#a2762a';
+                             colorVerifier = 'white';
                          }
                         caseSvg.setAttributeNS(null, 'fill', '#a2762a');
                     } else {
                          if(j == this.taille-1){
-                             colorVerifier = '#a2762a';
+                             colorVerifier = 'white';
                          } else {
-                             colorVerifier = '#e5ca9a';
+                             colorVerifier = 'black';
                          }
                         caseSvg.setAttributeNS(null, 'fill', '#e5ca9a');
                     }
@@ -83,8 +84,6 @@ class Damier{
 
     drawPionSvg(){
         let rayon = 18;
-        let svg = document.querySelector('#damier');
-        let colorVerifier = '#672D2E' //#FDDDA7
         for(let j = 0; j < this.taille; j++){
             for(let i = 0; i < this.taille; i++){
                 //4 premières ligne et 4 dernières lignes remplises
@@ -97,34 +96,40 @@ class Damier{
                     let caseCourante = parental.querySelector('rect');
                     if(caseCourante.getAttribute("fill") == '#a2762a'){
                         let pionSvg = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-                        if(j==0 || j==1 || j==2 || j==3){
-                            //on indique la nature du pion (pion) et son camp (black or white) ainsi que le fait
-                            // que ce pion soit déplaçable (draggable)
-                            // on indique que la case (<g></g>) parente du pion possèdera un attribut busy si la case est occupée
-                            // ainsi que la couleur du pion qui l'occupe
-                            // cela permettra une meilleure maniabilité des cases
-                            // !!! L'attribut busy (black||white) doit être supprimé lorsque la case n'est plus occupé
-                            pionSvg.setAttribute('class', 'pion black draggable');
-                            parental.setAttribute('class', 'busy black');
-                        } else {
-                            pionSvg.setAttribute('class', 'pion white draggable');
-                            parental.setAttribute('class', 'busy white');
-                        }
                         pionSvg.setAttributeNS(null, 'r', rayon.toString());
                         pionSvg.setAttributeNS(null, 'cx', newcx.toString());
                         pionSvg.setAttributeNS(null, 'cy', newcy.toString());
-                        if(j==0 || j==1 || j==2 || j==3){
-                            pionSvg.setAttributeNS(null, 'fill', '#672D2E');
-                        } else if( j==this.taille-4 || j==this.taille-3 || j == this.taille-2 || j==this.taille-1){
-                            pionSvg.setAttributeNS(null, 'fill', '#FDDDA7');
-                        }
                         pionSvg.setAttributeNS(null, 'stroke-width', '2');
                         pionSvg.setAttributeNS(null, 'stroke', 'black');
-
+                        if(j==0 || j==1 || j==2 || j==3){
+                            if(this.couleurBas == "white") {
+                                //on indique la nature du pion (pion) et son camp (black or white) ainsi que le fait
+                                // que ce pion soit déplaçable (draggable)
+                                // on indique que la case (<g></g>) parente du pion possèdera un attribut busy si la case est occupée
+                                // ainsi que la couleur du pion qui l'occupe
+                                // cela permettra une meilleure maniabilité des cases
+                                // !!! L'attribut busy (black||white) doit être supprimé lorsque la case n'est plus occupé
+                                pionSvg.setAttribute('class', 'pion black draggable');
+                                pionSvg.setAttributeNS(null, 'fill', '#672D2E');
+                                parental.setAttribute('class', 'busy black');
+                            }else {
+                                pionSvg.setAttribute('class', 'pion white draggable');
+                                parental.setAttribute('class', 'busy white');
+                                pionSvg.setAttributeNS(null, 'fill', '#FDDDA7');
+                            }
+                        } else {
+                            if(this.couleurBas == "white") {                                
+                                pionSvg.setAttribute('class', 'pion white draggable');
+                                parental.setAttribute('class', 'busy white');
+                                pionSvg.setAttributeNS(null, 'fill', '#FDDDA7');
+                            }else {
+                                pionSvg.setAttribute('class', 'pion black draggable');
+                                parental.setAttribute('class', 'busy black');
+                                pionSvg.setAttributeNS(null, 'fill', '#672D2E');
+                            }
+                        }
                         parental.appendChild(pionSvg);
-
                     }
-
                 }
             }
         }
