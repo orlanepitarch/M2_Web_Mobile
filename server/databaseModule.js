@@ -68,8 +68,8 @@ var Move = mongoose.model('Move', moveSchema);
  * @typedef Game
  * @type {object}
  * @property {moveSchema} moves - the sequences of moves of the game.
- * @property {Player} whitePlayer - the white player.
- * @property {Player} playerBlack - the black player.
+ * @property {String} whitePlayer - the white player pseudo.
+ * @property {String} playerBlack - the black player pseudo.
  * @property {Date} [date] - the game date, automatically inputed by default.
  */
 
@@ -106,8 +106,8 @@ async function addAPlayer(Ppseudo, Prating, Ppassword){
 /**
  * add a game to the database
  * @param {moveSchema} seqMove - the sequences of moves of the game.
- * @param {Player} whitePlayer - the white player.
- * @param {Player} playerBlack - the black player.
+ * @param {String} whitePlayer - the white player.
+ * @param {String} playerBlack - the black player.
  * @param {Date} date - the game date.
  */
 
@@ -125,6 +125,7 @@ async function addAPlayer(Ppseudo, Prating, Ppassword){
         }
     });
  }
+
 
   /**
   * find a player by pseudo
@@ -179,6 +180,20 @@ async function addAPlayer(Ppseudo, Prating, Ppassword){
    player = findAPlayerByPseudo(pPseudo);
    player.rating=pNewRating;
    player.save();
+ }
+
+/**
+ * Find a game by id
+ * @param {String} id -the id of the game 
+ */
+ 
+ function findAGameById(id){
+  Game.find({_id : id}, function (err, comms) {
+    if (err) { throw err; }
+    else{
+        return comms;
+    }
+  });
  }
 
   /**
