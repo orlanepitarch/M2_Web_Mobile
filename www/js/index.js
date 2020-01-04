@@ -116,25 +116,40 @@ var app = {
         let elm = document.getElementById("damier");
         elm.addEventListener("prise", function(event) {
             socket.emit("priseAdverse", event.detail, socket.id);
-            console.log(event.detail);
         });
         elm.addEventListener("move", function(event) {
             if(document.getElementById(event.detail.nouvellePosition).classList.contains(jeu.couleurJoueur)) {
                 socket.emit("moveAdverse", event.detail, socket.id);
             }
-            console.log(event.detail);
         });
         elm.addEventListener("win", function(event) {
-            socket.emit("win", event.detail.couleurJoueur);
+            socket.emit("win", {couleur: event.detail.couleurJoueur, pseudo: pseudo, socketID: socket.id});
         });
+
+        socket.on('win', function(data) {
+            let joueur;
+            if(data == "black") {
+                joueur = "noirs";
+            }
+            else {
+                joueur = "blancs";
+            }
+            let replay = window.confirm("Partie Terminée : Les " + joueur +" ont gagnés ! Voulez vous rejouer ?")
+            if (replay) {
+                login.accueil();
+                socket.emit('nouveau_client', {socketId: socket.id, pseudo: pseudo});
+                gameType = "onLine";
+            }
+            else {
+                login.accueil();
+            }
+        })
           
         socket.on("priseAdverse", function(data) {
-            console.log(data.detailPrise);
             jeu.priseAdverse(data.detailPrise);
         });
 
         socket.on("moveAdverse", function(data) {
-            console.log(data.detailMove);
             jeu.moveAdverse(data.detailMove);
         });
     }

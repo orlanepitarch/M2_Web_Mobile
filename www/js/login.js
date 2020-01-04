@@ -47,6 +47,17 @@ class log {
         this.waitingScreen();
     }
 
+    accueil() {
+        if (document.getElementById('displayMessage').childElementCount == 1 ) {
+            if(document.getElementById("adversaire") != null) {
+                document.getElementById('displayMessage').removeChild(document.getElementById("adversaire"));
+                document.getElementById('pseudoHaut').innerText = "";
+                document.getElementById('pseudoBas').innerText = "";
+            }
+        }
+        document.getElementById('gameType').style.display = "block";
+    }
+
     mauvaisMDP() {
         var p = document.createElement("p");
         p.id = "mauvaisMDP"

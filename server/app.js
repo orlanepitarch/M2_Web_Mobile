@@ -14,10 +14,10 @@ io.sockets.on('connection', function (socket) {
         if (socket.id in duoID) {
             socket.to(duoID[socket.id]).emit('deconnexionAdversaire');
             waitingUser.push({socketId: duoID[socket.id], pseudo: duoPseudo[socket.id]});
-            delete duoID[duoID[socket.id]];
-            delete duoID[socket.id];
             delete duoPseudo[duoID[socket.id]];
             delete duoPseudo[socket.id];
+            delete duoID[duoID[socket.id]];
+            delete duoID[socket.id];
         }
         else {
             waitingUser = waitingUser.filter(function(player){
@@ -44,9 +44,9 @@ io.sockets.on('connection', function (socket) {
             waitingUser = waitingUser.slice(1);
         }
         if(waitingUser.length > 0) {
-            var socketID = dataClient.socketId;
-            var pseudo = dataClient.pseudo;
-            var aLier=waitingUser[0];
+            let socketID = dataClient.socketId;
+            let pseudo = dataClient.pseudo;
+            let aLier=waitingUser[0];
             waitingUser = waitingUser.slice(1);
             duoID[aLier.socketId] = socketID;
             duoPseudo[aLier.socketId] = pseudo;
@@ -75,8 +75,13 @@ io.sockets.on('connection', function (socket) {
         socket.to(duoID[socketID]).emit('moveAdverse', {detailMove: detailMove});
     });
     
-    socket.on("win", function(couleurGagnante) {
-        console.log(couleurGagnante + "ont gagné");
+    socket.on("win", function(dataClient) {
+        console.log(dataClient.couleurGagnante + " ont gagné");
+        delete duoPseudo[duoID[dataClient.socketID]];
+        delete duoPseudo[dataClient.socketID];
+        delete duoID[duoID[dataClient.socketID]];
+        delete duoID[dataClient.socketID.id];
+        socket.emit("win", dataClient.couleurGagnante);
     })
 });
 
