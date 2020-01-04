@@ -16,9 +16,6 @@ class Game {
         console.log("Joueur "+this.tourJoueur);
         document.getElementById("damier").style.border = "5px solid white";
     
-        if(gameType != "onLine") {
-            this.couleurJoueur = "white";
-        }
     
         //let this.tailleDamier = prompt("Veuillez choisir la taille de votre damier (valeur minimale 6) :")
         new Damier(this.tailleDamier);
@@ -100,11 +97,6 @@ class Game {
         }
 
     releasePion(event) {
-            if(document.querySelector('.white') == null){
-                alert("Partie Terminée : Les Noirs ont gagnés !");
-            } else if (document.querySelector('.black') == null) {
-                alert("Partie Terminée : Les Blancs ont gagnés !");
-            }
 
             //prise OBLIGATOIRE
             if(this.casePrises.size == 0){
@@ -112,6 +104,11 @@ class Game {
                 
             } else {
                 this.caseChoisie = this.prise(this.casePrises, event);
+                if(document.querySelector('.white') == null){
+                    alert("Partie Terminée : Les Noirs ont gagnés !");
+                } else if (document.querySelector('.black') == null) {
+                    alert("Partie Terminée : Les Blancs ont gagnés !");
+                }
             }
             this.upgradePionToDame(this.getCurrentPosRow(this.caseChoisie), this.getCurrentColor(), this.getCurrentStatus(), this.tailleDamier);
          
@@ -420,6 +417,7 @@ class Game {
                         clone.setAttributeNS(null, 'cy', (this.getPosY(selectableCase) + 25).toString());
                         selectableCase.setAttribute('class', 'busy '+this.getCurrentColor());
                         selectableCase.appendChild(clone);
+                        console.log("move",this.selectedPion);
                         if(this.caseActive.contains(this.selectedPion)) {
                             this.caseActive.removeChild(this.selectedPion);
                             this.caseActive.setAttribute('class', 'free');
@@ -429,12 +427,18 @@ class Game {
                         // le pion selectionne devient le clone de son dépacement
                         // nécessaire pour l'upgrade en dame
                         this.selectedPion = clone;
-                        let event = new CustomEvent("move", { detail: { anciennePosition: this.caseActive.id, nouvellePosition: caseDestination.id } });
-                        let elm = document.getElementById("damier");
-                        elm.dispatchEvent(event);
+                        if(gameType == "onLine") {
+                            let event = new CustomEvent("move", { detail: { anciennePosition: this.caseActive.id, nouvellePosition: caseDestination.id } });
+                            let elm = document.getElementById("damier");
+                            elm.dispatchEvent(event);
     
-                        console.log('move', this.tourJoueur);
+                            console.log('move', this.tourJoueur);
+                        }
+                        
                         this.tourJoueur = (this.tourJoueur=="white" ? "black" : "white");
+                        if(gameType != "onLine") {
+                            this.couleurJoueur = (this.couleurJoueur=="white" ? "black" : "white");
+                        }
                         document.getElementById("damier").style.border = "5px solid "+this.tourJoueur;
                         console.log(this.tourJoueur)
                     }
@@ -460,9 +464,11 @@ class Game {
                         clone.setAttributeNS(null, 'cy', (this.getPosY(caseDestination) + 25).toString());
                         caseDestination.setAttribute('class', 'busy '+this.getCurrentColor());
                         caseDestination.appendChild(clone);
+                        
                         this.caseActive.removeChild(this.selectedPion);
                         this.caseActive.setAttribute('class', 'free');
                         //on mange le pion (pion ou dame) saute
+                        console.log("prise1",caseSaute.querySelector('.draggable'));
                         caseSaute.removeChild(caseSaute.querySelector('.draggable'));
                         caseSaute.setAttribute('class', 'free');
                         //la caseFestination devient la case selectionné (après vérification)
@@ -471,29 +477,37 @@ class Game {
                         
                         this.selectedPion = clone;
 
-                        let event = new CustomEvent("prise", { detail: { anciennePosition: this.caseActive.id, prise: caseSaute.id, nouvellePosition: caseDesti.id } });
-                        let elm = document.getElementById("damier");
-                        elm.dispatchEvent(event);
+                        if(gameType == "onLine") {
+                            let event = new CustomEvent("prise", { detail: { anciennePosition: this.caseActive.id, prise: caseSaute.id, nouvellePosition: caseDesti.id } });
+                            let elm = document.getElementById("damier");
+                            elm.dispatchEvent(event);
+                        }
+                        
                         
                         this.casePrises = this.calculcaseOptions(this.getCurrentPosRow(caseDesti), this.getCurrentPosCol(caseDesti), this.getCurrentStatus(), this.getCurrentColor()).caseTake;
                         //Si la prise de pion adverse est possible, elle est OBLIGATOIRE !
                         if(this.casePrises.size == 0){
                             this.tourJoueur = (this.tourJoueur=="white" ? "black" : "white");
+                            if(gameType != "onLine") {
+                                this.couleurJoueur = (this.couleurJoueur=="white" ? "black" : "white");
+                            }
                             document.getElementById("damier").style.border = "5px solid "+this.tourJoueur;
                         }
                     }
                 } else {
                     for(let cd of caseDestination){
                         cd.removeChild(cd.querySelector('.indicatorPrise'));
-                        if((getPosX(cd)<=mouseX && getPosX(cd)+49>=mouseX) && (getPosY(cd)<=mouseY && getPosY(cd)+49>=mouseY)){
+                        if((this.getPosX(cd)<=mouseX && this.getPosX(cd)+49>=mouseX) && (this.getPosY(cd)<=mouseY && this.getPosY(cd)+49>=mouseY)){
                             let clone = this.selectedPion.cloneNode();
                             clone.setAttributeNS(null, 'cx', (this.getPosX(cd) + 25).toString());
                             clone.setAttributeNS(null, 'cy', (this.getPosY(cd) + 25).toString());
                             cd.setAttribute('class', 'busy '+this.getCurrentColor());
                             cd.appendChild(clone);
+                            console.log("prise2", this.selectedPion);
                             this.caseActive.removeChild(this.selectedPion);
                             this.caseActive.setAttribute('class', 'free');
                             //on mange le pion saute
+                            console.log("prise2", caseSaute.querySelector('.draggable'));
                             caseSaute.removeChild(caseSaute.querySelector('.draggable'));
                             caseSaute.setAttribute('class', 'free');
                             
@@ -502,14 +516,20 @@ class Game {
                             // nécessaire pour l'upgrade en dame
                             this.selectedPion = clone;
 
-                            let event = new CustomEvent("prise", { detail: { anciennePosition: this.caseActive.id, prise: caseSaute.id, nouvellePosition: caseDesti.id } });
-                            let elm = document.getElementById("damier");
-                            elm.dispatchEvent(event);
+                            if(gameType == "onLine") {
+                                let event = new CustomEvent("prise", { detail: { anciennePosition: this.caseActive.id, prise: caseSaute.id, nouvellePosition: caseDesti.id } });
+                                let elm = document.getElementById("damier");
+                                elm.dispatchEvent(event);
+                            }
+                            
                             
                             this.casePrises = this.calculcaseOptions(this.getCurrentPosRow(caseDesti), this.getCurrentPosCol(caseDesti), this.getCurrentStatus(), this.getCurrentColor()).caseTake;
                             //Si la prise de pion adverse est possible, elle est OBLIGATOIRE !
                             if(this.casePrises.size == 0){
                                 this.tourJoueur = (this.tourJoueur=="white" ? "black" : "white");
+                                if(gameType != "onLine") {
+                                    this.couleurJoueur = (this.couleurJoueur=="white" ? "black" : "white");
+                                }
                                 document.getElementById("damier").style.border = "5px solid "+this.tourJoueur;
                             }
                         }

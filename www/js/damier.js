@@ -16,10 +16,17 @@ class Damier{
             }
         }
     */
+        this.removeOldDamier();
         this.drawDamierSvg();
         this.drawPionSvg();
     }
 
+    removeOldDamier() {
+        let node= document.getElementById("damier");
+        if(node.childElementCount > 0) {
+            node.querySelectorAll('*').forEach(n => n.remove());
+        }
+    }
     drawDamierSvg(){
         let svg = document.querySelector('#damier');
         let colorVerifier = '#4b170d'; //variable temporaire permettant de permuter la couleur d'une case sur 2

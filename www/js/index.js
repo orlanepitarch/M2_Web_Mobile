@@ -28,15 +28,12 @@ var app = {
     // Bind any cordova events here. Common events are:
     // 'pause', 'resume', etc.
     onDeviceReady: function() {
-        //this.startGame();
-    
-
         var login = new log(); 
         var jeu;
         let pseudo;
         // on se connecte sur le port 28400 (notre serveur node) quand le device est pret
         var socket = io.connect('http://localhost:28400');
-
+        new Damier(10);
         var gameType="";
 
         var formulaire = document.getElementById("formConnexion");
@@ -58,7 +55,9 @@ var app = {
         }
 
         document.getElementById("local").onclick = function() {
-            
+            gameType = "local";
+            document.getElementById('gameType').style.display = "none";
+            jeu = new Game(gameType, "white");
         }
 
         socket.on("mauvaisMDP", function() {
@@ -74,7 +73,6 @@ var app = {
         });
 
         socket.on('findAdversaire', function(data) {
-            console.log("find adversaire");
             login.findAdversaire(data);
             let couleurJoueur;
             for (let prop in data) { 
@@ -83,9 +81,9 @@ var app = {
                     couleurJoueur = prop;
                 } 
             } 
-            console.log("slt", couleurJoueur)
             //refresh du damier :
             jeu = new Game(gameType, couleurJoueur);
+            alert("Vous jouez les pions "+couleurJoueur);
             
            
         });
@@ -116,9 +114,6 @@ var app = {
             console.log(data.detailMove);
             jeu.moveAdverse(data.detailMove);
         });
-    },
-    startGame: function () {
-        //game = new Game();
     }
 };
 
