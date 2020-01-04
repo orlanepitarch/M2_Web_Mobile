@@ -70,6 +70,8 @@ var Move = mongoose.model('Move', moveSchema);
  * @property {moveSchema} moves - the sequences of moves of the game.
  * @property {String} whitePlayer - the white player pseudo.
  * @property {String} playerBlack - the black player pseudo.
+ * @property {Number} state - the current game state : 
+ *                             0 means draw, 1 black win, -1 white win, 2 the game is still played
  * @property {Date} [date] - the game date, automatically inputed by default.
  */
 
@@ -79,6 +81,7 @@ var gameSchema = new mongoose.Schema({
     moves: [moveSchema],
     playerWhite: playerSchema,
     playerBlack: playerSchema,
+    state: number, min=-1, max=2,
     date: {type:Date, default: Date.now}
 });
 
@@ -182,19 +185,17 @@ async function addAPlayer(Ppseudo, Prating, Ppassword){
    player.save();
  }
 
-/**
- * Find a game by id
- * @param {String} id -the id of the game 
- */
- 
- function findAGameById(id){
-  Game.find({_id : id}, function (err, comms) {
-    if (err) { throw err; }
-    else{
-        return comms;
-    }
-  });
- }
+  /**
+  * add a move to a current game.
+  * @param {string} blackPlayerPseudo - the black player pseudo
+  * @param {string} whitePlayerPseudo - the white player pseudo
+  * @param {Move} move - the move 
+  */
+ function addAMoveToACurrentGame(blackPlayerPseudo, whitePlayerPseudo, move){
+  game = findACurrentGameByPlayers(blackPlayer,whitePlayer);
+  game.moves = game.moves+move;
+  game.save();
+}
 
   /**
   * find a game by players involved
@@ -215,6 +216,25 @@ async function addAPlayer(Ppseudo, Prating, Ppassword){
   });
 } 
 
+  /**
+  * find a game current game involving some given players
+  * @param {string} blackPlayerPseudo - the black player pseudo
+  * @param {string} whitePlayerPseudo - the white player pseudo
+  * @return {Game} - the games
+  */
+
+ function findACurrentGameByPlayers(blackPlayerPseudo, whitePlayerPseudo){
+  blackPlayer = findAPlayerByPseudo(blackPlayerPseudo);
+  whitePlayer = findAPlayerByPseudo(whitePlayerPseudo);
+
+ Game.find({playerWhite: whitePlayer, playerBlack:blackPlayer, state: 2}, function (err, comms) {
+   if (err) { throw err; }
+   else{
+       return comms;
+   }
+ });
+} 
+
 exports.addAPlayer = addAPlayer;
 exports.addAGame = addAGame;
 exports.findAPlayerByPseudo = findAPlayerByPseudo;
@@ -222,3 +242,5 @@ exports.findAllPlayers = findAllPlayers;
 exports.updateAPlayerRating = updateAPlayerRating;
 exports.findGamesByPlayers = findGamesByPlayers;
 exports.findAPasswordForAGivenPlayerByPseudo = findAPasswordForAGivenPlayerByPseudo;
+exports.findACurrentGameByPlayers = findACurrentGameByPlayers;
+exports.addAMoveToACurrentGame = addAMoveToACurrentGame;
