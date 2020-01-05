@@ -226,6 +226,48 @@ async function addAPlayer(Ppseudo, Ppassword){
  return game[0];
 } 
 
+/**
+ * find the X best players, by their number of wins
+ * @param {number} x, the number of players wanted. If x is greater than the number of player, then it simply sort all players. 
+ */
+async function findTheXBestPlayers(x){
+  allPlayers = await findAllPlayers();
+  allPseudos = [];
+  allNbOfWins = [];
+  allRatings = [];
+
+  if(x<1){
+    return "error ! x can't be <1";
+  }
+
+  j = 0 ;  
+  while((j!=x)&&(allPlayers.length!=0)){
+    iMax = 0 ;
+    nbWinsMax=allPlayers[0].nbWins;
+    i=1 ;
+
+    while(i!=allPlayers.length){
+      if((allPlayers[i].nbWins)>nbWinsMax){
+        iMax = i;
+        nbWinsMax = allPlayers[i];
+      }
+      i=i+1
+    }
+    allPseudos[j]=allPlayers[iMax].pseudo;
+    allNbOfWins[j]=allPlayers[iMax].nbWins;
+    allRatings[j]=allPlayers[iMax].rating;
+    allPlayers.splice(iMax,1);
+    j=j+1;
+  }
+
+  let result= [];
+  result.allPseudos = allPseudos;
+  result.allNbOfWins = allNbOfWins;
+  result.allRatings = allRatings;
+
+  return result;
+}
+
 exports.addAPlayer = addAPlayer;
 exports.addAGame = addAGame;
 exports.findAPlayerByPseudo = findAPlayerByPseudo;
@@ -237,3 +279,4 @@ exports.findACurrentGameByPlayers = findACurrentGameByPlayers;
 exports.addAMoveToACurrentGame = addAMoveToACurrentGame;
 exports.findAPlayerByPseudoWithoutPassword = findAPlayerByPseudoWithoutPassword;
 exports.addAWinner = addAWinner;
+exports.findTheXBestPlayers = findTheXBestPlayers;

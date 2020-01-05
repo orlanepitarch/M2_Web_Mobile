@@ -133,8 +133,9 @@ async function test(){
     //db.addAPlayer("Orlane","Orlane");
     //db.addAPlayer("Victor", "Victor");
 
-    //allPlayers = await db.findAllPlayers();
+    allPlayers = await db.findAllPlayers();
     //console.log("nombre de joueurs dans la db = "+allPlayers.length);
+    //console.log("joueur 2 = "+allPlayers[1].pseudo);
     //db.updateAPlayerRating("Orlane",2000);
 
     //db.addAGame("Corentin","Orlane");
@@ -144,6 +145,14 @@ async function test(){
     //db.addAMoveToACurrentGame("Corentin","Orlane", "5/5", "4/4");
 
     //db.addAWinner("Corentin","Orlane","black");
+
+    //ajout manuel de membres tests
+    /*res = await db.findTheXBestPlayers(5);
+    i = 0 ;
+    while(i!=res.allPseudos.length){
+        console.log("n°"+(i+1)+" is "+res.allPseudos[i]+" with a rating of "+res.allRatings[i]+" and a nb of win of "+res.allNbOfWins[i]);
+        i=i+1;
+    }*/
 }
 
 test();
