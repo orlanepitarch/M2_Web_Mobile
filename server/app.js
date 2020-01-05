@@ -3,7 +3,7 @@ var io = require('socket.io')(server);
 var duoID = {};
 var duoPseudo = {};
 var waitingUser = new Array();
-var dbMongo = require('./databaseModule');  //TODO à supprimer
+let db = require('./databaseModule');
 var exJoueur = require('./exJoueur');    //TODO à supprimer
 
 var login = require("./login");
@@ -16,6 +16,8 @@ io.sockets.on('connection', function (socket) {
     socket.on('disconnect', function () {
         if (socket.id in duoID) {
             socket.to(duoID[socket.id]).emit('deconnexionAdversaire');
+            let couleurGagnante = duoPseudo[duoID[socket.id]].couleur;
+            db.addAWinner(couleurGagnante);
             waitingUser.push({socketId: duoID[socket.id], pseudo: duoPseudo[socket.id]});
             delete duoPseudo[duoID[socket.id]];
             delete duoPseudo[socket.id];
@@ -52,9 +54,10 @@ io.sockets.on('connection', function (socket) {
             let aLier=waitingUser[0];
             waitingUser = waitingUser.slice(1);
             duoID[aLier.socketId] = socketID;
-            duoPseudo[aLier.socketId] = pseudo;
+            duoPseudo[aLier.socketId] = {pseudo: pseudo, couleur: "black"};
             duoID[socketID] = aLier.socketId;
-            duoPseudo[socketID] = aLier.pseudo;
+            duoPseudo[socketID] =  {pseudo: aLier.pseudo, couleur: "white"};
+            db.addAGame(aLier.pseudo, pseudo);
             socket.emit('findAdversaire', {white: aLier.pseudo, black: pseudo});
             socket.to(aLier.socketId).emit('findAdversaire', {white: aLier.pseudo, black: pseudo});
         }
@@ -72,16 +75,37 @@ io.sockets.on('connection', function (socket) {
 
     socket.on('priseAdverse', function(detailPrise, tailleJeu, socketID) {
         let detailInverse = gameManagement.inversePositionPrise(detailPrise, tailleJeu);
+        let pseudoWhite;
+        let pseudoBlack;
+        if (duoPseudo[socketID].couleur == "white") {
+            pseudoWhite = duoPseudo[socketID].pseudo;
+            pseudoBlack = duoPseudo[duoID[socketID]].pseudo;
+        }else {
+            pseudoWhite = duoPseudo[duoID[socketID]].pseudo;
+            pseudoBlack = duoPseudo[socketID].pseudo;
+        } 
+        db.addAMoveToACurrentGame(pseudoWhite,pseudoBlack, {anciennePosition: detailPrise.anciennePosition, nouvellePosition: detailPrise.nouvellePosition});
         socket.to(duoID[socketID]).emit('priseAdverse', {detailPrise: detailInverse});
     });
 
     socket.on('moveAdverse', function(detailMove, tailleJeu, socketID) {
         let detailInverse = gameManagement.inversePositionMove(detailMove, tailleJeu);
+        let pseudoWhite;
+        let pseudoBlack;
+        if (duoPseudo[socketID].couleur == "white") {
+            pseudoWhite = duoPseudo[socketID].pseudo;
+            pseudoBlack = duoPseudo[duoID[socketID]].pseudo;
+        }else {
+            pseudoWhite = duoPseudo[duoID[socketID]].pseudo;
+            pseudoBlack = duoPseudo[socketID].pseudo;
+        } 
+        db.addAMoveToACurrentGame(pseudoWhite,pseudoBlack, detailMove);
         socket.to(duoID[socketID]).emit('moveAdverse', {detailMove: detailInverse});
     });
     
     socket.on("win", function(dataClient) {
         console.log(dataClient.couleurGagnante + " ont gagné");
+        db.addAWinner(dataClient.couleurGagnante);
         delete duoPseudo[duoID[dataClient.socketID]];
         delete duoPseudo[dataClient.socketID];
         delete duoID[duoID[dataClient.socketID]];

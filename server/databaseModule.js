@@ -12,15 +12,16 @@ db.once('open', function() {});
  * @property {string} pseudo - the player pseudo.
  * @property {Number} rating - the player rating.
  * @property {string} password - the player encrypted password
+ * @property {Number} nbVictoires - his number of victory
  */
 
 /** @type {Player} */
 
 var playerSchema = new mongoose.Schema({
   pseudo: {type: String, minlength:3, maxlength: 15},
-  //rating: {type:ratingSchema}, 
   rating: {type:Number},
-  password: {type:String}
+  password: {type:String},
+  nbVictoires: {type:Number, default:0}
 });
 
 var Player = mongoose.model('Player', playerSchema);
@@ -77,14 +78,13 @@ async function addAPlayer(Ppseudo, Ppassword){
 
 /**
  * add a game to the database, at the current date
- * @param {String} seqMove - the sequences of moves of the game.
  * @param {String} whitePlayer - the white player.
  * @param {String} blackPlayer - the black player.
  */
 
-  function addAGame(seqMove, whitePlayer, blackPlayer){
+  function addAGame(whitePlayer, blackPlayer){
      var newGame = new Game({
-        moves: seqMove,
+        moves: [],
         playerWhite: whitePlayer,
         playerBlack: blackPlayer,
         state: 2,
@@ -171,15 +171,27 @@ async function addAPlayer(Ppseudo, Ppassword){
   * add a move to a current game.
   * @param {string} blackPlayerPseudo - the black player pseudo
   * @param {string} whitePlayerPseudo - the white player pseudo
-  * @param {String} move - the move 
+  * @param {String} move - the move {anciennePosition: anciennePos, nouvellePosition: nouvellePos}
   */
- async function addAMoveToACurrentGame(blackPlayerPseudo, whitePlayerPseudo, move){
-  game = await findACurrentGameByPlayers(blackPlayerPseudo,whitePlayerPseudo);
+ async function addAMoveToACurrentGame(whitePlayerPseudo, blackPlayerPseudo, move){
+  game = await findACurrentGameByPlayers(whitePlayerPseudo, blackPlayerPseudo);
   idNewMove = game.moves.length;
   game.moves.set(idNewMove,move);
   game.save();
 }
 
+/**
+  * Change the state to indicate the winner
+  * @param {string} couleurGagnante - the color who won the game
+*/
+ async function addAWinner(couleurGagnante){
+  game = await findACurrentGameByPlayers(whitePlayerPseudo, blackPlayerPseudo);
+  if (couleurGagnante == "black") {
+    game.state.set("1");
+  }else {
+    game.state.set("-1");
+  }
+ }
   /**
   * find a game by players involved
   * @param {string} blackPlayerPseudo - the black player pseudo
@@ -187,7 +199,7 @@ async function addAPlayer(Ppseudo, Ppassword){
   * @return {Game} - the games
   */
 
- async function findGamesByPlayers(blackPlayerPseudo, whitePlayerPseudo){
+ async function findGamesByPlayers(whitePlayerPseudo, blackPlayerPseudo){
   var game = await Game.find({playerWhite:whitePlayerPseudo, playerBlack:blackPlayerPseudo}, function (err, comms) {
     if (err) { throw err; }
     else{
@@ -224,3 +236,4 @@ exports.findAPasswordForAGivenPlayerByPseudo = findAPasswordForAGivenPlayerByPse
 exports.findACurrentGameByPlayers = findACurrentGameByPlayers;
 exports.addAMoveToACurrentGame = addAMoveToACurrentGame;
 exports.findAPlayerByPseudoWithoutPassword = findAPlayerByPseudoWithoutPassword;
+exports.addAWinner = addAWinner;
