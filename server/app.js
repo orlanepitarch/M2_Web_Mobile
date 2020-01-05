@@ -17,7 +17,16 @@ io.sockets.on('connection', function (socket) {
         if (socket.id in duoID) {
             socket.to(duoID[socket.id]).emit('deconnexionAdversaire');
             let couleurGagnante = duoPseudo[duoID[socket.id]].couleur;
-            db.addAWinner(couleurGagnante);
+            let pseudoWhite;
+            let pseudoBlack;
+            if (duoPseudo[socket.id].couleur == "white") {
+                pseudoWhite = duoPseudo[socket.id].pseudo;
+                pseudoBlack = duoPseudo[duoID[socket.id]].pseudo;
+            }else {
+                pseudoWhite = duoPseudo[duoID[socket.id]].pseudo;
+                pseudoBlack = duoPseudo[socket.id].pseudo;
+            } 
+            db.addAWinner(pseudoWhite, pseudoBlack, couleurGagnante);
             waitingUser.push({socketId: duoID[socket.id], pseudo: duoPseudo[socket.id]});
             delete duoPseudo[duoID[socket.id]];
             delete duoPseudo[socket.id];
@@ -84,7 +93,8 @@ io.sockets.on('connection', function (socket) {
             pseudoWhite = duoPseudo[duoID[socketID]].pseudo;
             pseudoBlack = duoPseudo[socketID].pseudo;
         } 
-        db.addAMoveToACurrentGame(pseudoWhite,pseudoBlack, ""+detailPrise.anciennePosition, ""+detailPrise.nouvellePosition);
+        console.log(pseudoWhite, pseudoBlack);
+        db.addAMoveToACurrentGame(pseudoWhite,pseudoBlack, detailPrise.anciennePosition, detailPrise.nouvellePosition);
         socket.to(duoID[socketID]).emit('priseAdverse', {detailPrise: detailInverse});
     });
 
@@ -99,7 +109,7 @@ io.sockets.on('connection', function (socket) {
             pseudoWhite = duoPseudo[duoID[socketID]].pseudo;
             pseudoBlack = duoPseudo[socketID].pseudo;
         } 
-        db.addAMoveToACurrentGame(pseudoWhite,pseudoBlack, detailMove);
+        db.addAMoveToACurrentGame(pseudoWhite,pseudoBlack, detailMove.anciennePosition, detailMove.nouvellePosition);
         socket.to(duoID[socketID]).emit('moveAdverse', {detailMove: detailInverse});
     });
     

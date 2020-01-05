@@ -7,8 +7,7 @@ var dbMongo = require('./databaseModule');
  * @param {string} score - the score of the game, or winning side : "black", "white" or "draw".
  */
 async function updateGameAndRatings(blackPlayerPseudo, whitePlayerPseudo, score){
-
-    game = await dbMongo.findACurrentGameByPlayers(blackPlayerPseudo,whitePlayerPseudo);
+    game = await dbMongo.findACurrentGameByPlayers(whitePlayerPseudo, blackPlayerPseudo);
     blackPlayer = await dbMongo.findAPlayerByPseudoWithoutPassword(blackPlayerPseudo);
     whitePlayer = await dbMongo.findAPlayerByPseudoWithoutPassword(whitePlayerPseudo);
 

@@ -2,7 +2,7 @@ var mongoose = require('mongoose');
 var bcrypt = require('bcryptjs');
 var elo = require('./ratingManager');
 
-mongoose.connect('mongodb://127.0.0.1:27017/test5', {useNewUrlParser: true, useUnifiedTopology: true});
+mongoose.connect('mongodb://127.0.0.1:27017/JeuDeDame', {useNewUrlParser: true, useUnifiedTopology: true});
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function() {});
@@ -176,7 +176,7 @@ async function addAPlayer(Ppseudo, Ppassword){
   * @param {String} endingPosition - the ending position of the move
   */
  async function addAMoveToACurrentGame(whitePlayerPseudo, blackPlayerPseudo, startingPosition, endingPosition){
-  game = await findACurrentGameByPlayers(blackPlayerPseudo, whitePlayerPseudo);
+  game = await findACurrentGameByPlayers(whitePlayerPseudo, blackPlayerPseudo);
   idNewMove = game.moves.length;
   game.moves.set(idNewMove,startingPosition);
   game.moves.set(idNewMove+1,endingPosition);
@@ -216,7 +216,7 @@ async function addAPlayer(Ppseudo, Ppassword){
   * @return {Game} - the games
   */
 
- async function findACurrentGameByPlayers(blackPlayerPseudo, whitePlayerPseudo){
+ async function findACurrentGameByPlayers(whitePlayerPseudo, blackPlayerPseudo){
  game = await Game.find({playerWhite: whitePlayerPseudo, playerBlack:blackPlayerPseudo, state: 2}, function (err, comms) {
    if (err) { throw err; }
    else{

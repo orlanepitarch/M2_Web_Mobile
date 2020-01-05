@@ -20,7 +20,7 @@ class log {
         document.getElementById('gameType').style.display = "none";
     }
     
-    findAdversaire(data){
+    findAdversaire(data, couleurJoueur){
         let p = document.createElement("p");
         p.id = "adversaire";
         p.innerHTML = "Adversaire trouvé";
@@ -31,8 +31,14 @@ class log {
             document.getElementById("cancelMatchMaking").style.display = "none";
         }
         document.getElementById('displayMessage').appendChild(p);
-        document.getElementById('pseudoHaut').innerText = data.black;
-        document.getElementById('pseudoBas').innerText = data.white;
+        if(couleurJoueur == "white") {
+            document.getElementById('pseudoHaut').innerText = data.black;
+            document.getElementById('pseudoBas').innerText = data.white;
+        }else {
+            document.getElementById('pseudoHaut').innerText = data.white;
+            document.getElementById('pseudoBas').innerText = data.black;
+        }
+        
         document.getElementById('gameType').style.display = "none";
     }
 

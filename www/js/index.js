@@ -91,7 +91,6 @@ var app = {
         });
 
         socket.on('findAdversaire', function(data) {
-            login.findAdversaire(data);
             let couleurJoueur;
             for (let prop in data) { 
                 if (data.hasOwnProperty(prop)) { 
@@ -99,6 +98,7 @@ var app = {
                     couleurJoueur = prop;
                 } 
             } 
+            login.findAdversaire(data, couleurJoueur);
             //refresh du damier :
             jeu = new Game(gameType, couleurJoueur);
             
