@@ -63,4 +63,48 @@ function calculateNewRating(ratingValue, KFactorValue, score, expectedScore){
     return ratingValue + KFactorValue*(score-expectedScore);
 }
 
+/**
+ * find the X best players, by their number of wins
+ * @param {number} x, the number of players wanted. If x is greater than the number of player, then it simply sort all players. 
+ * @return an array of arrays (allPseudos, allNbOfWins, allRatings), containing the sorted values.
+ */
+async function findTheXBestPlayers(x){
+    allPlayers = await dbMongo.findAllPlayers();
+    allPseudos = [];
+    allNbOfWins = [];
+    allRatings = [];
+  
+    if(x<1){
+      return "error ! x can't be <1";
+    }
+  
+    j = 0 ;  
+    while((j!=x)&&(allPlayers.length!=0)){
+      iMax = 0 ;
+      nbWinsMax=allPlayers[0].nbWins;
+      i=1 ;
+  
+      while(i!=allPlayers.length){
+        if((allPlayers[i].nbWins)>nbWinsMax){
+          iMax = i;
+          nbWinsMax = allPlayers[i];
+        }
+        i=i+1
+      }
+      allPseudos[j]=allPlayers[iMax].pseudo;
+      allNbOfWins[j]=allPlayers[iMax].nbWins;
+      allRatings[j]=allPlayers[iMax].rating;
+      allPlayers.splice(iMax,1);
+      j=j+1;
+    }
+  
+    let result= [];
+    result.allPseudos = allPseudos;
+    result.allNbOfWins = allNbOfWins;
+    result.allRatings = allRatings;
+  
+    return result;
+  }
+
 exports.updateGameAndRatings = updateGameAndRatings;
+exports.findTheXBestPlayers = findTheXBestPlayers;

@@ -3,7 +3,8 @@ var io = require('socket.io')(server);
 var duoID = {};
 var duoPseudo = {};
 var waitingUser = new Array();
-let db = require('./databaseModule');
+var db = require('./databaseModule');
+var ratingManager = require('./ratingManager');
 
 var login = require("./login");
 var gameManagement = require("./gameManagement");
@@ -133,7 +134,7 @@ async function test(){
     //db.addAPlayer("Orlane","Orlane");
     //db.addAPlayer("Victor", "Victor");
 
-    allPlayers = await db.findAllPlayers();
+    //allPlayers = await db.findAllPlayers();
     //console.log("nombre de joueurs dans la db = "+allPlayers.length);
     //console.log("joueur 2 = "+allPlayers[1].pseudo);
     //db.updateAPlayerRating("Orlane",2000);
@@ -147,7 +148,7 @@ async function test(){
     //db.addAWinner("Corentin","Orlane","black");
 
     //ajout manuel de membres tests
-    /*res = await db.findTheXBestPlayers(5);
+    /*res = await ratingManager.findTheXBestPlayers(5);
     i = 0 ;
     while(i!=res.allPseudos.length){
         console.log("n°"+(i+1)+" is "+res.allPseudos[i]+" with a rating of "+res.allRatings[i]+" and a nb of win of "+res.allNbOfWins[i]);
