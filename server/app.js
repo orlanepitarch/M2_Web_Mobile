@@ -4,6 +4,7 @@ var duoID = {};
 var duoPseudo = {};
 var waitingUser = new Array();
 var dbMongo = require('./databaseModule');  //TODO à supprimer
+var exJoueur = require('./exJoueur');    //TODO à supprimer
 
 var login = require("./login");
 var gameManagement = require("./gameManagement");
@@ -100,7 +101,20 @@ async function test(){
 
     //dbMongo.updateAPlayerRating("Corentin",1670);
 
-    dbMongo.addAGame([['1'],['2/2']],"Corentin","Corentin");
+    //listeDeCoup = ["1/1","2/2","-","3/3"];
+    //listeDeCoup[listeDeCoup.length] = "9/9";
+    //console.log(listeDeCoup[listeDeCoup.length-1]);
+    //joueurTest = "222";
+    //dbMongo.addAGame(listeDeCoup, joueurTest,joueurTest);
+    //game = await dbMongo.findACurrentGameByPlayers(joueurTest,joueurTest);
+    //console.log("nb coups ="+game.moves.length);
+    //console.log("coup 1 = "+game.moves[0]);
+    //dbMongo.addAMoveToACurrentGame(joueurTest,joueurTest,"5/5");
+
+    //dbMongo.addAPlayer("user1","user1");
+    //dbMongo.addAPlayer("user2","user2");
+    //dbMongo.addAGame(["1/1","-"], "user1","user2");
+    exJoueur.updateRatings("user1","user2",1);
 }
 
 test();

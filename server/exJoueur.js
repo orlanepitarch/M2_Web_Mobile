@@ -6,11 +6,11 @@ var dbMongo = require('./databaseModule');
  * @param {*} whitePlayerPseudo 
  * @param {*} score 
  */
-function updateRatings(blackPlayerPseudo, whitePlayerPseudo, score){
+async function updateRatings(blackPlayerPseudo, whitePlayerPseudo, score){
 
-    game = dbMongo.findACurrentGameByPlayers(blackPlayerPseudo,whitePlayerPseudo);
-    blackPlayer = dbMongo.findAPlayerByPseudo(blackPlayerPseudo);
-    whitePlayer = dbMongo.findAPlayerByPseudo(whitePlayerPseudo);
+    game = await dbMongo.findACurrentGameByPlayers(blackPlayerPseudo,whitePlayerPseudo);
+    blackPlayer = await dbMongo.findAPlayerByPseudoWithoutPassword(blackPlayerPseudo);
+    whitePlayer = await dbMongo.findAPlayerByPseudoWithoutPassword(whitePlayerPseudo);
 
     /*blackPlayerRating = blackPlayer.rating[blackPlayer.rating.length()-1];
     blackPlayerRatingValue = blackPlayerRating.ratingValue;
@@ -23,18 +23,18 @@ function updateRatings(blackPlayerPseudo, whitePlayerPseudo, score){
     blackPlayerRating = blackPlayer.rating;
     whitePlayerRating = whitePlayer.rating;
 
-    transformedBlackRating = transformARating(blackPlayerRatingValue);
-    transformedWhiteRating = transformARating(whitePlayerRatingValue);
+    transformedBlackRating = transformARating(blackPlayerRating);
+    transformedWhiteRating = transformARating(whitePlayerRating);
 
     expectedBlackScore = expectedScore(transformedBlackRating, transformedWhiteRating);
     expectedWhiteScore = expectedScore(transformedWhiteRating, transformedBlackRating);
     
-    if(score=1){
+    if(score==1){
         blackScoreValue = 1;
         whiteScoreValue = 0;
     }
     else{
-        if(score=-1){
+        if(score==-1){
             blackScoreValue=0;
             whiteScoreValue = 1;
         }
@@ -44,11 +44,11 @@ function updateRatings(blackPlayerPseudo, whitePlayerPseudo, score){
         }
     }
 
-    newBlackPlayerRating = calculateNewRating(blackPlayerRatingValue,32,blackScoreValue,expectedBlackScore);
-    newWhitePlayerRating = calculateNewRating(whitePlayerRatingValue,32,whiteScoreValue,expectedWhiteScore);
+    newBlackPlayerRating = calculateNewRating(blackPlayerRating,32,blackScoreValue,expectedBlackScore);
+    newWhitePlayerRating = calculateNewRating(whitePlayerRating,32,whiteScoreValue,expectedWhiteScore);
 
-    dbMongo.updateAPlayerRating(blackPlayerPseudo,newBlackPlayerRating,blackPlayerRatingDeviation,false);
-    dbMongo.updateAPlayerRating(whitePlayerPseudo,newWhitePlayerRating,whitePlayerRatingDeviation,false);
+    dbMongo.updateAPlayerRating(blackPlayerPseudo,newBlackPlayerRating);
+    dbMongo.updateAPlayerRating(whitePlayerPseudo,newWhitePlayerRating);
 }
 
 function transformARating(rating){
