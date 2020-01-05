@@ -54,8 +54,6 @@
             </form>
         </section>
 
-        <section id="displayMessage">
-        </section>
         <button id="cancelMatchMaking" style="display: none;">Annuler le Matchmaking</button>
         <button id="cancelLocal" style="display: none;">Quitter la partie locale</button>
 
@@ -65,13 +63,33 @@
             <button id="local">local</button>
         </section>
         
-        <section id="game">
+        <section id="game" style="height: 80%; width: 80%">
             <p id="pseudoHaut" style="margin-left: 200px;"></p>
-            <svg height="500" width="500" id="damier">
+            <svg style="height: 100%; width: 100%" id="damier">
             </svg>
             <p id="pseudoBas" style="margin-left: 200px;"></p>
         </section>
-
+        <script>
+            function changeSize() {
+                console.log("slt")
+                console.log(document.getElementById("game").offsetHeight * 0.9)
+                console.log("avant height", document.getElementById("damier").style.height);
+                console.log("avant width", document.getElementById("damier").style.width);
+                if (document.getElementById("game").offsetHeight < document.getElementById("game").offsetWidth) {
+                    document.getElementById("damier").style.height = (document.getElementById("game").offsetHeight * 0.9).toString()+"px";
+                    document.getElementById("damier").style.width = (document.getElementById("game").offsetHeight * 0.9).toString()+"px";
+                }else {
+                    document.getElementById("damier").style.height = (document.getElementById("game").offsetWidth * 0.9).toString()+"px";
+                    document.getElementById("damier").style.width = (document.getElementById("game").offsetWidth * 0.9).toString()+"px";
+                }
+                
+                console.log("après height", document.getElementById("damier").style.height);
+                console.log("après width", document.getElementById("damier").style.width);
+            };
+                
+            changeSize();
+            //window.addEventListener('resize', changeSize());
+        </script>
         <section id="high-score">
         </section>
 
