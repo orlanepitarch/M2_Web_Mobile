@@ -1,24 +1,16 @@
 var dbMongo = require('./databaseModule');
 
 /**
- * this only use the elo rating formula yet
- * @param {*} blackPlayerPseudo 
- * @param {*} whitePlayerPseudo 
- * @param {*} score 
+ * update a game state and the involved player rating, once the game is over.
+ * @param {string} blackPlayerPseudo - the black player pseudo
+ * @param {string} whitePlayerPseudo - the white player pseudo
+ * @param {string} score - the score of the game, or winning side : "black", "white" or "draw".
  */
-async function updateRatings(blackPlayerPseudo, whitePlayerPseudo, score){
+async function updateGameAndRatings(blackPlayerPseudo, whitePlayerPseudo, score){
 
     game = await dbMongo.findACurrentGameByPlayers(blackPlayerPseudo,whitePlayerPseudo);
     blackPlayer = await dbMongo.findAPlayerByPseudoWithoutPassword(blackPlayerPseudo);
     whitePlayer = await dbMongo.findAPlayerByPseudoWithoutPassword(whitePlayerPseudo);
-
-    /*blackPlayerRating = blackPlayer.rating[blackPlayer.rating.length()-1];
-    blackPlayerRatingValue = blackPlayerRating.ratingValue;
-    blackPlayerRatingDeviation = blackPlayerRating.ratingDeviation;
-
-    whitePlayerRating = whitePlayer.rating[whitePlayer.rating.length()-1];
-    whitePlayerRatingValue = whitePlayerRating.ratingValue;
-    whitePlayerRatingDeviation = whitePlayerRating.ratingDeviation;*/
 
     blackPlayerRating = blackPlayer.rating;
     whitePlayerRating = whitePlayer.rating;
@@ -29,20 +21,28 @@ async function updateRatings(blackPlayerPseudo, whitePlayerPseudo, score){
     expectedBlackScore = expectedScore(transformedBlackRating, transformedWhiteRating);
     expectedWhiteScore = expectedScore(transformedWhiteRating, transformedBlackRating);
     
-    if(score==1){
+    if(score=="black"){
         blackScoreValue = 1;
         whiteScoreValue = 0;
+        game.state=1;
+        blackPlayer.nbWins = blackPlayer.nbWins+1;
+        blackPlayer.save();
     }
     else{
-        if(score==-1){
+        if(score=="white"){
             blackScoreValue=0;
             whiteScoreValue = 1;
+            game.state=-1;
+            whitePlayer.nbWins = whitePlayer.nbWins+1;
+            whitePlayer.save();
         }
-        else{//score = 0
+        else{//draw
             blackScoreValue = 1/2;
             whiteScoreValue = 1/2;
+            game.state=0;
         }
     }
+    game.save();
 
     newBlackPlayerRating = calculateNewRating(blackPlayerRating,32,blackScoreValue,expectedBlackScore);
     newWhitePlayerRating = calculateNewRating(whitePlayerRating,32,whiteScoreValue,expectedWhiteScore);
@@ -63,4 +63,4 @@ function calculateNewRating(ratingValue, KFactorValue, score, expectedScore){
     return ratingValue + KFactorValue*(score-expectedScore);
 }
 
-exports.updateRatings = updateRatings;
+exports.updateGameAndRatings = updateGameAndRatings;

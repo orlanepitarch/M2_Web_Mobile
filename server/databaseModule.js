@@ -1,7 +1,8 @@
 var mongoose = require('mongoose');
 var bcrypt = require('bcryptjs');
+var elo = require('./elo');
 
-mongoose.connect('mongodb://127.0.0.1:27017/test4', {useNewUrlParser: true, useUnifiedTopology: true});
+mongoose.connect('mongodb://127.0.0.1:27017/test5', {useNewUrlParser: true, useUnifiedTopology: true});
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function() {});
@@ -12,7 +13,7 @@ db.once('open', function() {});
  * @property {string} pseudo - the player pseudo.
  * @property {Number} rating - the player rating.
  * @property {string} password - the player encrypted password
- * @property {Number} nbVictoires - his number of victory
+ * @property {Number} nbWins - his number of wins
  */
 
 /** @type {Player} */
@@ -21,7 +22,7 @@ var playerSchema = new mongoose.Schema({
   pseudo: {type: String, minlength:3, maxlength: 15},
   rating: {type:Number},
   password: {type:String},
-  nbVictoires: {type:Number, default:0}
+  nbWins: {type:Number, default:0, min:0}
 });
 
 var Player = mongoose.model('Player', playerSchema);
@@ -157,9 +158,9 @@ async function addAPlayer(Ppseudo, Ppassword){
  }
 
  /**
-  * update a player rating
+  * update a player rating and number of wins
   * @param {string} pPseudo - the player pseudo
-  * @param {number} pNewRating, - the player rating
+  * @param {number} pNewRating - the player rating
   */
   async function updateAPlayerRating(pPseudo, pNewRating){
    player = await findAPlayerByPseudoWithoutPassword(pPseudo);
@@ -171,30 +172,25 @@ async function addAPlayer(Ppseudo, Ppassword){
   * add a move to a current game.
   * @param {string} blackPlayerPseudo - the black player pseudo
   * @param {string} whitePlayerPseudo - the white player pseudo
-  * @param {String} move - the move {anciennePosition: anciennePos, nouvellePosition: nouvellePos}
+  * @param {String} startingPosition  - the starting position of the move
+  * @param {String} endingPosition - the ending position of the move
   */
- async function addAMoveToACurrentGame(whitePlayerPseudo, blackPlayerPseudo, move){
-  game = await findACurrentGameByPlayers(whitePlayerPseudo, blackPlayerPseudo);
+ async function addAMoveToACurrentGame(whitePlayerPseudo, blackPlayerPseudo, startingPosition, endingPosition){
+  game = await findACurrentGameByPlayers(blackPlayerPseudo, whitePlayerPseudo);
   idNewMove = game.moves.length;
-  game.moves.set(idNewMove,move);
+  game.moves.set(idNewMove,startingPosition);
+  game.moves.set(idNewMove+1,endingPosition);
   game.save();
 }
 
 /**
-  * Change the state to indicate the winner
-  * @param {string} couleurGagnante - the color who won the game
+  * Change the state to indicate the winner, and update the players rating
+  * @param {string} whitePlayerPseudo - the white player pseudo
+  * @param {string} blackPlayerPseudo - the black player pseudo
+  * @param {string} winningSide - the color who won the game (black, white, draw)
 */
- async function addAWinner(whitePlayerPseudo, blackPlayerPseudo, couleurGagnante){
-  game = await findACurrentGameByPlayers(whitePlayerPseudo, blackPlayerPseudo);
-  if (couleurGagnante == "black") {
-    game.state.set("1");
-    await Player.findOneAndUpdate({ pseudo: blackPlayerPseudo }, { $inc: { nbVictoire: 1 } });
-  }else {
-    game.state.set("-1");
-    await Player.findOneAndUpdate({ pseudo: whitePlayerPseudo }, { $inc: { nbVictoire: 1 } });
-  }
-  game.save();
-  
+ async function addAWinner(whitePlayerPseudo, blackPlayerPseudo, winningSide){
+    elo.updateGameAndRatings(blackPlayerPseudo,whitePlayerPseudo,winningSide);
  }
   /**
   * find a game by players involved

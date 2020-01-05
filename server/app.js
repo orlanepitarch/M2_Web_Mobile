@@ -4,7 +4,6 @@ var duoID = {};
 var duoPseudo = {};
 var waitingUser = new Array();
 let db = require('./databaseModule');
-var exJoueur = require('./exJoueur');    //TODO à supprimer
 
 var login = require("./login");
 var gameManagement = require("./gameManagement");
@@ -84,7 +83,7 @@ io.sockets.on('connection', function (socket) {
             pseudoWhite = duoPseudo[duoID[socketID]].pseudo;
             pseudoBlack = duoPseudo[socketID].pseudo;
         } 
-        db.addAMoveToACurrentGame(pseudoWhite,pseudoBlack, {anciennePosition: detailPrise.anciennePosition, nouvellePosition: detailPrise.nouvellePosition});
+        db.addAMoveToACurrentGame(pseudoWhite,pseudoBlack, ""+detailPrise.anciennePosition, ""+detailPrise.nouvellePosition);
         socket.to(duoID[socketID]).emit('priseAdverse', {detailPrise: detailInverse});
     });
 
@@ -129,25 +128,22 @@ server.listen(28400);
 // TODO à supprimer
 
 async function test(){
-    //allPlayers = await dbMongo.findAllPlayers();
+
+    //db.addAPlayer("Corentin","Corentin");
+    //db.addAPlayer("Orlane","Orlane");
+    //db.addAPlayer("Victor", "Victor");
+
+    //allPlayers = await db.findAllPlayers();
     //console.log("nombre de joueurs dans la db = "+allPlayers.length);
+    //db.updateAPlayerRating("Orlane",2000);
 
-    //dbMongo.updateAPlayerRating("Corentin",1670);
+    //db.addAGame("Corentin","Orlane");
+    
+    //db.addAMoveToACurrentGame("Corentin","Orlane","1/1","2/2");
 
-    //listeDeCoup = ["1/1","2/2","-","3/3"];
-    //listeDeCoup[listeDeCoup.length] = "9/9";
-    //console.log(listeDeCoup[listeDeCoup.length-1]);
-    //joueurTest = "222";
-    //dbMongo.addAGame(listeDeCoup, joueurTest,joueurTest);
-    //game = await dbMongo.findACurrentGameByPlayers(joueurTest,joueurTest);
-    //console.log("nb coups ="+game.moves.length);
-    //console.log("coup 1 = "+game.moves[0]);
-    //dbMongo.addAMoveToACurrentGame(joueurTest,joueurTest,"5/5");
+    //db.addAMoveToACurrentGame("Corentin","Orlane", "5/5", "4/4");
 
-    //dbMongo.addAPlayer("user1","user1");
-    //dbMongo.addAPlayer("user2","user2");
-    //dbMongo.addAGame(["1/1","-"], "user1","user2");
-    //exJoueur.updateRatings("user1","user2",1);
+    //db.addAWinner("Corentin","Orlane","black");
 }
 
 test();
