@@ -3,6 +3,7 @@ var io = require('socket.io')(server);
 var duoID = {};
 var duoPseudo = {};
 var waitingUser = new Array();
+var dbMongo = require('./databaseModule');  //TODO à supprimer
 
 var login = require("./login");
 
@@ -87,3 +88,16 @@ io.sockets.on('connection', function (socket) {
 
 // port défini arbitrairement (28400 pour éviter les conflits avec les ports fréquemment utilisés)
 server.listen(28400);
+
+// TODO à supprimer
+
+async function test(){
+    //allPlayers = await dbMongo.findAllPlayers();
+    //console.log("nombre de joueurs dans la db = "+allPlayers.length);
+
+    //dbMongo.updateAPlayerRating("Corentin",1670);
+
+    dbMongo.addAGame([['1'],['2/2']],"Corentin","Corentin");
+}
+
+test();
