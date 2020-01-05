@@ -105,7 +105,16 @@ io.sockets.on('connection', function (socket) {
     
     socket.on("win", function(dataClient) {
         console.log(dataClient.couleurGagnante + " ont gagné");
-        db.addAWinner(dataClient.couleurGagnante);
+        let pseudoWhite;
+        let pseudoBlack;
+        if (duoPseudo[dataClient.socketID].couleur == "white") {
+            pseudoWhite = duoPseudo[dataClient.socketID].pseudo;
+            pseudoBlack = duoPseudo[duoID[dataClient.socketID]].pseudo;
+        }else {
+            pseudoWhite = duoPseudo[duoID[dataClient.socketID]].pseudo;
+            pseudoBlack = duoPseudo[dataClient.socketID].pseudo;
+        } 
+        db.addAWinner(pseudoWhite, pseudoBlack, dataClient.couleurGagnante);
         delete duoPseudo[duoID[dataClient.socketID]];
         delete duoPseudo[dataClient.socketID];
         delete duoID[duoID[dataClient.socketID]];
@@ -138,7 +147,7 @@ async function test(){
     //dbMongo.addAPlayer("user1","user1");
     //dbMongo.addAPlayer("user2","user2");
     //dbMongo.addAGame(["1/1","-"], "user1","user2");
-    exJoueur.updateRatings("user1","user2",1);
+    //exJoueur.updateRatings("user1","user2",1);
 }
 
 test();

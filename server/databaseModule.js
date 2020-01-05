@@ -184,13 +184,17 @@ async function addAPlayer(Ppseudo, Ppassword){
   * Change the state to indicate the winner
   * @param {string} couleurGagnante - the color who won the game
 */
- async function addAWinner(couleurGagnante){
+ async function addAWinner(whitePlayerPseudo, blackPlayerPseudo, couleurGagnante){
   game = await findACurrentGameByPlayers(whitePlayerPseudo, blackPlayerPseudo);
   if (couleurGagnante == "black") {
     game.state.set("1");
+    await Player.findOneAndUpdate({ pseudo: blackPlayerPseudo }, { $inc: { nbVictoire: 1 } });
   }else {
     game.state.set("-1");
+    await Player.findOneAndUpdate({ pseudo: whitePlayerPseudo }, { $inc: { nbVictoire: 1 } });
   }
+  game.save();
+  
  }
   /**
   * find a game by players involved
