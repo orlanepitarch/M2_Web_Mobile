@@ -16,7 +16,7 @@ class Game {
         console.log("Joueur "+this.tourJoueur);
         document.getElementById("damier").style.border = "5px solid white";
         this.gameType = gameType;
-    
+        this.tailleCase = (100/parseInt(this.tailleDamier));
     
         //let this.tailleDamier = prompt("Veuillez choisir la taille de votre damier (valeur minimale 6) :")
         new Damier(this.tailleDamier, this.couleurJoueur);
@@ -60,10 +60,10 @@ class Game {
                 
                 for (let selectableCase of this.caseOptions) {
                     let coloredIndicatorOfMoving = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-                    coloredIndicatorOfMoving.setAttributeNS(null, 'r', '9');
+                    coloredIndicatorOfMoving.setAttributeNS(null, 'r', this.tailleCase/5+"%");
                     coloredIndicatorOfMoving.setAttributeNS(null, 'fill', '#89DEF3');
-                    coloredIndicatorOfMoving.setAttributeNS(null, 'cx', (this.getPosX(selectableCase) + 25).toString());
-                    coloredIndicatorOfMoving.setAttributeNS(null, 'cy', (this.getPosY(selectableCase) + 25).toString());
+                    coloredIndicatorOfMoving.setAttributeNS(null, 'cx', (this.getPosX(selectableCase) + this.tailleCase/2).toString() + "%");
+                    coloredIndicatorOfMoving.setAttributeNS(null, 'cy', (this.getPosY(selectableCase) + this.tailleCase/2).toString() + "%");
                     coloredIndicatorOfMoving.setAttribute('class', 'indicator');
                     selectableCase.appendChild(coloredIndicatorOfMoving);
                 }
@@ -71,19 +71,19 @@ class Game {
                 for (let [caseSaute, caseDestination] of this.casePrises) {
                     if(this.getCurrentStatus() == 'pion'){
                             let coloredIndicatorOfPrise = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-                            coloredIndicatorOfPrise.setAttributeNS(null, 'r', '11');
+                            coloredIndicatorOfPrise.setAttributeNS(null, 'r', this.tailleCase/5+"%");
                             coloredIndicatorOfPrise.setAttributeNS(null, 'fill', 'red');
-                            coloredIndicatorOfPrise.setAttributeNS(null, 'cx', (this.getPosX(caseDestination) + 25).toString());
-                            coloredIndicatorOfPrise.setAttributeNS(null, 'cy', (this.getPosY(caseDestination) + 25).toString());
+                            coloredIndicatorOfPrise.setAttributeNS(null, 'cx', (this.getPosX(caseDestination) + this.tailleCase/2).toString() + "%");
+                            coloredIndicatorOfPrise.setAttributeNS(null, 'cy', (this.getPosY(caseDestination) + this.tailleCase/2).toString() + "%");
                             coloredIndicatorOfPrise.setAttribute('class', 'indicatorPrise');
                             caseDestination.appendChild(coloredIndicatorOfPrise);
                     } else {
                         for(let cd of caseDestination){
                             let coloredIndicatorOfPrise = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-                            coloredIndicatorOfPrise.setAttributeNS(null, 'r', '11');
+                            coloredIndicatorOfPrise.setAttributeNS(null, 'r', this.tailleCase/5+"%");
                             coloredIndicatorOfPrise.setAttributeNS(null, 'fill', 'red');
-                            coloredIndicatorOfPrise.setAttributeNS(null, 'cx', (this.getPosX(cd) + 25).toString());
-                            coloredIndicatorOfPrise.setAttributeNS(null, 'cy', (this.getPosY(cd) + 25).toString());
+                            coloredIndicatorOfPrise.setAttributeNS(null, 'cx', (this.getPosX(cd)  + this.tailleCase/2).toString() + "%");
+                            coloredIndicatorOfPrise.setAttributeNS(null, 'cy', (this.getPosY(cd)  + this.tailleCase/2).toString() + "%");
                             coloredIndicatorOfPrise.setAttribute('class', 'indicatorPrise');
                             cd.appendChild(coloredIndicatorOfPrise);
                         }
@@ -97,6 +97,7 @@ class Game {
 
         //prise OBLIGATOIRE
         if(this.casePrises.size == 0 && this.tourJoueur == this.couleurJoueur){
+            console.log(this.caseOptions)
             this.caseChoisie = this.moving(this.caseOptions, event);
             
         } else if (this.casePrises.size != 0 && this.tourJoueur == this.couleurJoueur){
@@ -144,14 +145,19 @@ class Game {
     //utile en cas de view box
     getMousePosition(event) {
         let CTM = damier.getScreenCTM();
+        console.log(CTM)
         //Si sur mobile
         if(event != undefined && event.touches){
             event = event.touches[0];
         }
         if(event != undefined ) {
+            console.log((parseInt(document.getElementById("damier").style.height)/this.tailleCase))
+            console.log(parseInt(288/54));
+            console.log("cc", ((event.clientX - CTM.e)*10 / CTM.a)/(parseInt(document.getElementById("damier").style.height)/this.tailleCase), 
+                ((event.clientY - CTM.f)*10 / CTM.d)/(parseInt(document.getElementById("damier").style.height)/this.tailleCase));
             return {
-                x: (event.clientX - CTM.e) / CTM.a,
-                y: (event.clientY - CTM.f) / CTM.d
+                x: ((event.clientX - CTM.e)*10 / CTM.a)/(parseInt(document.getElementById("damier").style.height)/this.tailleCase),
+                y: ((event.clientY - CTM.f)*10 / CTM.d)/(parseInt(document.getElementById("damier").style.height)/this.tailleCase)
             };
         }
     }
@@ -495,13 +501,13 @@ class Game {
                     selectableCase.removeChild(selectableCase.querySelector('.indicator'));
                 }
                 //si le release s'effectue au dessus d'une case authorisée
-                if((this.getPosX(selectableCase)<=mouseX && this.getPosX(selectableCase)+49>=mouseX) && (this.getPosY(selectableCase)<=mouseY && this.getPosY(selectableCase)+49>=mouseY)){
+                if((this.getPosX(selectableCase)<=mouseX && this.getPosX(selectableCase)+this.tailleCase>=mouseX) && (this.getPosY(selectableCase)<=mouseY && this.getPosY(selectableCase)+this.tailleCase>=mouseY)){
                     console.log("case active ", this.caseActive);
                     console.log("selectableCase", selectableCase);
                     if(selectableCase.classList[0] != "busy" && this.caseActive.classList[0] == "busy") {
                         let clone = this.selectedPion.cloneNode();
-                        clone.setAttributeNS(null, 'cx', (this.getPosX(selectableCase) + 25).toString());
-                        clone.setAttributeNS(null, 'cy', (this.getPosY(selectableCase) + 25).toString());
+                        clone.setAttributeNS(null, 'cx', (this.getPosX(selectableCase) + this.tailleCase/2).toString() + "%");
+                        clone.setAttributeNS(null, 'cy', (this.getPosY(selectableCase) + this.tailleCase/2).toString() + "%");
                         selectableCase.setAttribute('class', 'busy '+this.getCurrentColor());
                         selectableCase.appendChild(clone);
                         console.log("move",this.selectedPion);
@@ -547,11 +553,11 @@ class Game {
                     caseDestination.removeChild(caseDestination.querySelector('.indicatorPrise'));
                 }
             
-                if((this.getPosX(caseDestination)<=mouseX && this.getPosX(caseDestination)+49>=mouseX) && (this.getPosY(caseDestination)<=mouseY && this.getPosY(caseDestination)+49>=mouseY)){
+                if((this.getPosX(caseDestination)<=mouseX && this.getPosX(caseDestination)+this.tailleCase>=mouseX) && (this.getPosY(caseDestination)<=mouseY && this.getPosY(caseDestination)+this.tailleCase>=mouseY)){
                     if(caseDestination.classList[0] != "busy" && this.caseActive.classList[0] == "busy") {
                         let clone = this.selectedPion.cloneNode();
-                        clone.setAttributeNS(null, 'cx', (this.getPosX(caseDestination) + 25).toString());
-                        clone.setAttributeNS(null, 'cy', (this.getPosY(caseDestination) + 25).toString());
+                        clone.setAttributeNS(null, 'cx', (this.getPosX(caseDestination) + this.tailleCase/2).toString() + "%");
+                        clone.setAttributeNS(null, 'cy', (this.getPosY(caseDestination) + this.tailleCase/2).toString() + "%");
                         caseDestination.setAttribute('class', 'busy '+this.getCurrentColor());
                         caseDestination.appendChild(clone);
                         
@@ -588,11 +594,11 @@ class Game {
             } else {
                 for(let cd of caseDestination){
                     cd.removeChild(cd.querySelector('.indicatorPrise'));
-                    if((this.getPosX(cd)<=mouseX && this.getPosX(cd)+49>=mouseX) && (this.getPosY(cd)<=mouseY && this.getPosY(cd)+49>=mouseY)){
+                    if((this.getPosX(cd)<=mouseX && this.getPosX(cd)+this.tailleCase>=mouseX) && (this.getPosY(cd)<=mouseY && this.getPosY(cd)+this.tailleCase>=mouseY)){
                         if(cd.classList[0] != "busy" && this.caseActive.classList[0] == "busy") {
                             let clone = this.selectedPion.cloneNode();
-                            clone.setAttributeNS(null, 'cx', (this.getPosX(cd) + 25).toString());
-                            clone.setAttributeNS(null, 'cy', (this.getPosY(cd) + 25).toString());
+                            clone.setAttributeNS(null, 'cx', (this.getPosX(cd) + this.tailleCase/2).toString() + "%");
+                            clone.setAttributeNS(null, 'cy', (this.getPosY(cd) + this.tailleCase/2).toString() + "%");
                             cd.setAttribute('class', 'busy '+this.getCurrentColor());
                             cd.appendChild(clone);
                             console.log("prise2", this.selectedPion);
@@ -638,8 +644,8 @@ class Game {
         if (caseDepart.getElementsByTagName("circle")[0]) {
             let clone = caseDepart.getElementsByTagName("circle")[0].cloneNode();
             let colorPion = clone.getAttribute("class").split(' ')[1];
-            clone.setAttributeNS(null, 'cx', (this.getPosX(caseArrive) + 25).toString());
-            clone.setAttributeNS(null, 'cy', (this.getPosY(caseArrive) + 25).toString());
+            clone.setAttributeNS(null, 'cx', (this.getPosX(caseArrive) + this.tailleCase/2).toString() + "%");
+            clone.setAttributeNS(null, 'cy', (this.getPosY(caseArrive) + this.tailleCase/2).toString() + "%");
             caseArrive.setAttribute('class', 'busy '+colorPion);
             caseDepart.setAttribute('class', 'free');
             caseDepart.removeChild(caseDepart.getElementsByTagName("circle")[0]);
@@ -665,8 +671,8 @@ class Game {
         if (caseDepart.getElementsByTagName("circle")[0]) {
             let clone = caseDepart.getElementsByTagName("circle")[0].cloneNode();
             let colorPion = clone.getAttribute("class").split(' ')[1];
-            clone.setAttributeNS(null, 'cx', (this.getPosX(caseArrive) + 25).toString());
-            clone.setAttributeNS(null, 'cy', (this.getPosY(caseArrive) + 25).toString());
+            clone.setAttributeNS(null, 'cx', (this.getPosX(caseArrive) + this.tailleCase/2).toString() + "%");
+            clone.setAttributeNS(null, 'cy', (this.getPosY(caseArrive) + this.tailleCase/2).toString() + "%");
             caseArrive.setAttribute('class', 'busy '+colorPion);
             caseSaute.removeChild(caseSaute.getElementsByTagName("circle")[0]);
             caseSaute.setAttribute('class', 'free');
