@@ -48,6 +48,10 @@ class Game {
         console.log("Joueur "+this.couleurJoueur);
         console.log("tour :"+this.tourJoueur);
         console.log("contient ?", event.target.classList.contains(this.couleurJoueur))
+        //enlève les indicateurs pour les mobiles :
+        if (document.querySelectorAll('.indicator') != null) {
+            document.querySelectorAll('.indicator').forEach(function(doc) {doc.parentNode.removeChild(doc)})
+        }
         if (event.target.classList.contains('draggable') && this.tourJoueur==this.couleurJoueur && event.target.classList.contains(this.couleurJoueur)) {                   
             this.selectedPion = event.target;
             console.log(this.selectedPion);
