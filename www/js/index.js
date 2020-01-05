@@ -32,7 +32,7 @@ var app = {
         var jeu;
         let pseudo;
         // on se connecte sur le port 28400 (notre serveur node) quand le device est pret
-        var socket = io.connect('http://localhost:28400');
+        var socket = io.connect('http://192.168.1.22:28400');
         new Damier(10,"white");
         var gameType="";
 

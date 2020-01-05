@@ -16,6 +16,8 @@ class Damier{
             }
         }
     */
+   
+        this.tailleCase = (100/parseInt(this.taille));
         this.couleurBas = couleurJoueur;
         this.removeOldDamier();
         this.drawDamierSvg();
@@ -34,14 +36,14 @@ class Damier{
         //contruction damier dynamique
         for (let i = 0 ; i < this.taille ; i++) {
             for (let j = 0; j < this.taille; j++) {
-                let newx = 50 * i;
-                let newy = 50 * j;
+                let newx = this.tailleCase * i;
+                let newy = this.tailleCase * j;
                 let caseConteneur = document.createElementNS("http://www.w3.org/2000/svg", "g");
                 caseConteneur.setAttributeNS(null, 'id', j.toString()+'/'+i.toString());
                 svg.appendChild(caseConteneur);
                 let caseSvg = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-                caseSvg.setAttributeNS(null, 'width', '50');
-                caseSvg.setAttributeNS(null, 'height', '50');
+                caseSvg.setAttributeNS(null, 'width', this.tailleCase+"%");
+                caseSvg.setAttributeNS(null, 'height', this.tailleCase+"%");
                 //datermine la couleur d'une case selon
                 //si la taille du damier et pair ou impair
                 if(this.taille%2 == 1){
@@ -72,8 +74,8 @@ class Damier{
 
                 caseSvg.setAttributeNS(null, 'stroke-width', '2');
                 caseSvg.setAttributeNS(null, 'stroke', 'black');
-                caseSvg.setAttributeNS(null, "x", newx.toString());
-                caseSvg.setAttributeNS(null, "y", newy.toString());
+                caseSvg.setAttributeNS(null, "x", newx.toString()+"%");
+                caseSvg.setAttributeNS(null, "y", newy.toString()+"%");
                 //aucun pion sur le conteneur à sa créations
                 caseConteneur.setAttribute('class', 'free');
                 caseConteneur.appendChild(caseSvg);
@@ -83,22 +85,22 @@ class Damier{
     }
 
     drawPionSvg(){
-        let rayon = 18;
+        let rayon = (this.tailleCase/3);
         for(let j = 0; j < this.taille; j++){
             for(let i = 0; i < this.taille; i++){
                 //4 premières ligne et 4 dernières lignes remplises
                 if(j==0 || j==1 || j==2 || j==3 || j==this.taille-4 || j==this.taille-3 || j==this.taille-2 || j==this.taille-1){
                     //on calcule les coordonnées
-                    let newcx = 50 * i + 25;
-                    let newcy = 50 * j + 25;
+                    let newcx = this.tailleCase * i + (this.tailleCase/2);
+                    let newcy = this.tailleCase * j + (this.tailleCase/2);
                     //Si le parent n'est pas une case de couleur foncé, il est inutile de créer un pion
                     let parental = document.getElementById(j.toString()+'/'+i.toString());
                     let caseCourante = parental.querySelector('rect');
                     if(caseCourante.getAttribute("fill") == '#a2762a'){
                         let pionSvg = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-                        pionSvg.setAttributeNS(null, 'r', rayon.toString());
-                        pionSvg.setAttributeNS(null, 'cx', newcx.toString());
-                        pionSvg.setAttributeNS(null, 'cy', newcy.toString());
+                        pionSvg.setAttributeNS(null, 'r', rayon.toString()+"%");
+                        pionSvg.setAttributeNS(null, 'cx', newcx.toString()+"%");
+                        pionSvg.setAttributeNS(null, 'cy', newcy.toString()+"%");
                         pionSvg.setAttributeNS(null, 'stroke-width', '2');
                         pionSvg.setAttributeNS(null, 'stroke', 'black');
                         if(j==0 || j==1 || j==2 || j==3){
