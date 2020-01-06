@@ -2,21 +2,6 @@ class Damier{
 
     constructor(taille, couleurJoueur) {
         this.taille = taille;
-        /*let damier = new Array(taille);
-
-        for (let i = 0 ; i < taille ; i++) {
-            let colonne = new Array(taille);
-            damier[i] = colonne; // A chaque ligne, on ajoute les colonnes
-
-            for (let j = 0; j < taille; j++) {
-                // Dans chaque case on test de savoir si on est sur un numéro de case pair ou impair
-                // Pour cela, on additionne de sa position dans les lignes et dans les colonnes.
-
-                damier[i][j] = ( ((i+j)%2)== 0  ? 1 : -1);
-            }
-        }
-    */
-   
         this.tailleCase = (100/parseInt(this.taille));
         this.couleurBas = couleurJoueur;
         this.removeOldDamier();
@@ -88,12 +73,12 @@ class Damier{
         let rayon = (this.tailleCase/3);
         for(let j = 0; j < this.taille; j++){
             for(let i = 0; i < this.taille; i++){
-                //4 premières ligne et 4 dernières lignes remplises
+                //4 premières lignes et 4 dernières lignes remplies
                 if(j==0 || j==1 || j==2 || j==3 || j==this.taille-4 || j==this.taille-3 || j==this.taille-2 || j==this.taille-1){
                     //on calcule les coordonnées
                     let newcx = this.tailleCase * i + (this.tailleCase/2);
                     let newcy = this.tailleCase * j + (this.tailleCase/2);
-                    //Si le parent n'est pas une case de couleur foncé, il est inutile de créer un pion
+                    //Si le parent n'est pas une case de couleur foncée, il est inutile de créer un pion
                     let parental = document.getElementById(j.toString()+'/'+i.toString());
                     let caseCourante = parental.querySelector('rect');
                     if(caseCourante.getAttribute("fill") == '#a2762a'){
@@ -110,7 +95,7 @@ class Damier{
                                 // on indique que la case (<g></g>) parente du pion possèdera un attribut busy si la case est occupée
                                 // ainsi que la couleur du pion qui l'occupe
                                 // cela permettra une meilleure maniabilité des cases
-                                // !!! L'attribut busy (black||white) doit être supprimé lorsque la case n'est plus occupé
+                                // !!! L'attribut busy (black||white) doit être supprimé lorsque la case n'est plus occupée
                                 pionSvg.setAttribute('class', 'pion black draggable');
                                 pionSvg.setAttributeNS(null, 'fill', '#672D2E');
                                 parental.setAttribute('class', 'busy black');

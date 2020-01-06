@@ -13,20 +13,14 @@ class Game {
         this.couleurJoueur = couleurJoueur;
         console.log("Joueur "+this.couleurJoueur);
         this.tourJoueur = "white";
-        console.log("Joueur "+this.tourJoueur);
+        console.log("Tour "+this.tourJoueur);
         document.getElementById("damier").style.border = "5px solid white";
         this.gameType = gameType;
         this.tailleCase = (100/parseInt(this.tailleDamier));
     
-        //let this.tailleDamier = prompt("Veuillez choisir la taille de votre damier (valeur minimale 6) :")
         new Damier(this.tailleDamier, this.couleurJoueur);
         this.makeDraggable(document.getElementById("damier"));
     }
-    
-    // let test = document.getElementById("3/4").querySelector('.pion');
-    // test.setAttribute('class', 'dame black draggable');
-    // test.setAttributeNS(null, 'stroke', 'red');
-    // test.setAttributeNS(null, 'stroke-width', '4');
 
     makeDraggable(event) {
         let damier = event;
@@ -45,16 +39,12 @@ class Game {
     }
     
     clickedPion(event) {
-        console.log("Joueur "+this.couleurJoueur);
-        console.log("tour :"+this.tourJoueur);
-        console.log("contient ?", event.target.classList.contains(this.couleurJoueur))
         //enlève les indicateurs pour les mobiles :
         if (document.querySelectorAll('.indicator') != null) {
             document.querySelectorAll('.indicator').forEach(function(doc) {doc.parentNode.removeChild(doc)})
         }
         if (event.target.classList.contains('draggable') && this.tourJoueur==this.couleurJoueur && event.target.classList.contains(this.couleurJoueur)) {                   
             this.selectedPion = event.target;
-            console.log(this.selectedPion);
             this.caseActive = this.selectedPion.parentNode;
             this.caseOptions = this.calculcaseOptions(this.getCurrentPosRow(this.caseActive), this.getCurrentPosCol(this.caseActive), this.getCurrentStatus(), this.getCurrentColor()).caseOpt;
             this.casePrises = this.calculcaseOptions(this.getCurrentPosRow(this.caseActive), this.getCurrentPosCol(this.caseActive), this.getCurrentStatus(), this.getCurrentColor()).caseTake;
@@ -101,7 +91,6 @@ class Game {
 
         //prise OBLIGATOIRE
         if(this.casePrises.size == 0 && this.tourJoueur == this.couleurJoueur){
-            console.log(this.caseOptions)
             this.caseChoisie = this.moving(this.caseOptions, event);
             
         } else if (this.casePrises.size != 0 && this.tourJoueur == this.couleurJoueur){
@@ -145,20 +134,15 @@ class Game {
         
     }
 
-    //hotfix pour tout screen, correcteur de la position de souris
-    //utile en cas de view box
+    //correcteur de la position de souris
     getMousePosition(event) {
         let CTM = damier.getScreenCTM();
-        console.log(CTM)
         //Si sur mobile
         if(event != undefined && event.touches){
             event = event.touches[0];
         }
+        //on transforme la position de la souris (en px, obtenue via CTM) en position en % sur notre damier (car la position d'une case est en %)
         if(event != undefined ) {
-            console.log((parseInt(document.getElementById("damier").style.height)/this.tailleCase))
-            console.log(parseInt(288/54));
-            console.log("cc", ((event.clientX - CTM.e)*10 / CTM.a)/(parseInt(document.getElementById("damier").style.height)/this.tailleCase), 
-                ((event.clientY - CTM.f)*10 / CTM.d)/(parseInt(document.getElementById("damier").style.height)/this.tailleCase));
             return {
                 x: ((event.clientX - CTM.e)*10 / CTM.a)/(parseInt(document.getElementById("damier").style.height)/this.tailleCase),
                 y: ((event.clientY - CTM.f)*10 / CTM.d)/(parseInt(document.getElementById("damier").style.height)/this.tailleCase)
@@ -167,8 +151,7 @@ class Game {
     }
 
     //fonction permettant de proposer des cases jouables (tableau de <g></g>) selon
-    // la couleur du pion, son sta                console.log("moncul");tut (pion ou dame), la position du pion courant cliqué
-    // return this.caseOptions[]
+    // la couleur du pion, son statut (pion ou dame), la position du pion courant cliqué
     calculcaseOptions(posRow, posCol, statusPion, colorPion) {
         if(statusPion == 'pion'){
             return this.comportementPion(posRow, posCol, colorPion);
@@ -211,10 +194,12 @@ class Game {
         }
     }
 
+    //retourne les cases mangeables pour le pion selectionné + cases sur lesquelles il peut aller
     comportementPion(posRow, posCol, colorPion) {
         let caseOpt = [];
         let caseTake = new Map();
         let adverseColor = colorPion == "white" ? "black" : "white";
+        //jeu en local -> les blancs et les noirs ne joues pas dans le même sens
         if(this.gameType == "local") {
             if (colorPion == 'white') {
                 let caseLeft = document.getElementById((posRow - 1) + '/' + (posCol - 1));
@@ -227,8 +212,8 @@ class Game {
                 if (caseRight != null && caseRight.classList.contains('free')) {
                     caseOpt.push(caseRight);
                 }
-                //Si les cases droites / gauches / arrDroite / arrGauche sont occupés par l'adversaire,
-                //On vérifie que l'on peut damer le pion
+                //Si les cases droites / gauches / arrDroite / arrGauche sont occupées par l'adversaire,
+                //On vérifie que l'on peut manger ce pion
                 if (caseLeft != null && caseLeft.classList.contains('black')) {
                     let casePriseAdvLeft = document.getElementById((posRow - 2) + '/' + (posCol - 2));
                     if (casePriseAdvLeft != null && casePriseAdvLeft.classList.contains('free')) {
@@ -268,8 +253,8 @@ class Game {
                 if (caseRight != null && caseRight.classList.contains('free')) {
                     caseOpt.push(caseRight);
                 }
-                //Si les cases droites / gauches / arrDroite / arrGauche sont occupés par l'adversaire,
-                //On vérifie que l'on peut damer le pion
+                //Si les cases droites / gauches / arrDroite / arrGauche sont occupées par l'adversaire,
+                //On vérifie que l'on peut manger ce pion
                 if (caseLeft != null && caseLeft.classList.contains('white')) {
                     let casePriseAdvLeft = document.getElementById((posRow + 2) + '/' + (posCol - 2));
                     if (casePriseAdvLeft != null && casePriseAdvLeft.classList.contains('free')) {
@@ -301,6 +286,7 @@ class Game {
             } else {
                 throw Error('La couleur du pion selectionné n\'existe pas');
             }
+        //cas multijoueurs : les deux couleurs avancent dans le même sens
         } else {
             let caseLeft = document.getElementById((posRow - 1) + '/' + (posCol - 1));
             let caseRight = document.getElementById((posRow - 1) + '/' + (posCol + 1));
@@ -312,8 +298,8 @@ class Game {
             if (caseRight != null && caseRight.classList.contains('free')) {
                 caseOpt.push(caseRight);
             }
-            //Si les cases droites / gauches / arrDroite / arrGauche sont occupés par l'adversaire,
-            //On vérifie que l'on peut damer le pion
+            //Si les cases droites / gauches / arrDroite / arrGauche sont occupées par l'adversaire,
+            //On vérifie que l'on peut mange ce pion
             if (caseLeft != null && caseLeft.classList.contains(adverseColor)) {
                 let casePriseAdvLeft = document.getElementById((posRow - 2) + '/' + (posCol - 2));
                 if (casePriseAdvLeft != null && casePriseAdvLeft.classList.contains('free')) {
@@ -346,6 +332,7 @@ class Game {
             
     }
 
+    //retourne cases mangeables pour la dame + cases où elle peut se déplacer
     comportementDame(posRow, posCol, colorPion){
         let caseOpt = [];
         let caseTake = new Map();
@@ -376,7 +363,6 @@ class Game {
             }
             i++;
         }
-        //déplacemement possibles
         //diag back right
         caseDestinationsPossibles = [];
         i = 1;
@@ -401,7 +387,6 @@ class Game {
             }
             i++;
         }
-
         //diag left
         caseDestinationsPossibles = [];
         i = 1;
@@ -499,37 +484,33 @@ class Game {
             let caseDestination = this.caseActive;
             let mouseX = this.getMousePosition(event).x;
             let mouseY = this.getMousePosition(event).y;
-            //si la personne relache le clic sans rien faire on efface au moins les indicateurs
+            //si la personne relache le clic sans rien faire on efface les indicateurs
             for (let selectableCase of caseOptions) {
                 if(selectableCase.querySelector('.indicator')) {
                     selectableCase.removeChild(selectableCase.querySelector('.indicator'));
                 }
-                //si le release s'effectue au dessus d'une case authorisée
+                //si le release s'effectue au dessus d'une case autorisée
                 if((this.getPosX(selectableCase)<=mouseX && this.getPosX(selectableCase)+this.tailleCase>=mouseX) && (this.getPosY(selectableCase)<=mouseY && this.getPosY(selectableCase)+this.tailleCase>=mouseY)){
-                    console.log("case active ", this.caseActive);
-                    console.log("selectableCase", selectableCase);
                     if(selectableCase.classList[0] != "busy" && this.caseActive.classList[0] == "busy") {
                         let clone = this.selectedPion.cloneNode();
                         clone.setAttributeNS(null, 'cx', (this.getPosX(selectableCase) + this.tailleCase/2).toString() + "%");
                         clone.setAttributeNS(null, 'cy', (this.getPosY(selectableCase) + this.tailleCase/2).toString() + "%");
                         selectableCase.setAttribute('class', 'busy '+this.getCurrentColor());
                         selectableCase.appendChild(clone);
-                        console.log("move",this.selectedPion);
                         if(this.caseActive.contains(this.selectedPion)) {
                             this.caseActive.removeChild(this.selectedPion);
                             this.caseActive.setAttribute('class', 'free');
                         }
-                        //la caseFestination devient la case selectionné (après vérification)
+                        //la caseDestination devient la case selectionnée
                         caseDestination = selectableCase;
-                        // le pion selectionne devient le clone de son dépacement
+                        // le pion selectionné devient le clone de son dépacement
                         // nécessaire pour l'upgrade en dame
                         this.selectedPion = clone;
+                        //on envoie le mouvement via evenement au serveur si le jeu est en ligne
                         if(this.gameType == "onLine" && this.tourJoueur == this.couleurJoueur) {
                             let event = new CustomEvent("move", { detail: { anciennePosition: this.caseActive.id, nouvellePosition: caseDestination.id } });
                             let elm = document.getElementById("damier");
                             elm.dispatchEvent(event);
-    
-                            console.log('move', this.tourJoueur);
                         }
                         
                         this.tourJoueur = (this.tourJoueur=="white" ? "black" : "white");
@@ -537,14 +518,12 @@ class Game {
                             this.couleurJoueur = (this.couleurJoueur=="white" ? "black" : "white");
                         }
                         document.getElementById("damier").style.border = "5px solid "+this.tourJoueur;
-                        console.log(this.tourJoueur)
                     }
                     
                 }
             }
             return caseDestination;
         }
-        //Si la case Destination n'est pas authoriser alors elle reste par défaut la this.caseActive
     }
 
     prise(casePrises, event){
@@ -556,7 +535,6 @@ class Game {
                 if(caseDestination.querySelector('.indicatorPrise')) {
                     caseDestination.removeChild(caseDestination.querySelector('.indicatorPrise'));
                 }
-            
                 if((this.getPosX(caseDestination)<=mouseX && this.getPosX(caseDestination)+this.tailleCase>=mouseX) && (this.getPosY(caseDestination)<=mouseY && this.getPosY(caseDestination)+this.tailleCase>=mouseY)){
                     if(caseDestination.classList[0] != "busy" && this.caseActive.classList[0] == "busy") {
                         let clone = this.selectedPion.cloneNode();
@@ -564,17 +542,14 @@ class Game {
                         clone.setAttributeNS(null, 'cy', (this.getPosY(caseDestination) + this.tailleCase/2).toString() + "%");
                         caseDestination.setAttribute('class', 'busy '+this.getCurrentColor());
                         caseDestination.appendChild(clone);
-                        
                         this.caseActive.removeChild(this.selectedPion);
                         this.caseActive.setAttribute('class', 'free');
-                        //on mange le pion (pion ou dame) saute
-                        console.log("prise1",caseSaute.querySelector('.draggable'));
+                        //on mange le pion (pion ou dame) sauté
                         caseSaute.removeChild(caseSaute.querySelector('.draggable'));
                         caseSaute.setAttribute('class', 'free');
-                        //la caseFestination devient la case selectionné (après vérification)
+                        //la caseDestination devient la case selectionnée
                         caseDesti = caseDestination;
                         // nécessaire pour l'upgrade en dame
-                        
                         this.selectedPion = clone;
 
                         if(this.gameType == "onLine" && this.tourJoueur == this.couleurJoueur) {
@@ -583,9 +558,9 @@ class Game {
                             elm.dispatchEvent(event);
                         }
                         
-                        
+                        //calcul de si le pion selectionné doit encore prendre un pion adverse :
                         this.casePrises = this.calculcaseOptions(this.getCurrentPosRow(caseDesti), this.getCurrentPosCol(caseDesti), this.getCurrentStatus(), this.getCurrentColor()).caseTake;
-                        //Si la prise de pion adverse est possible, elle est OBLIGATOIRE !
+                        //Si la prise de pion adverse est encore possible, elle est OBLIGATOIRE !
                         if(this.casePrises.size == 0){
                             this.tourJoueur = (this.tourJoueur=="white" ? "black" : "white");
                             if(this.gameType != "onLine" ) {
@@ -605,15 +580,11 @@ class Game {
                             clone.setAttributeNS(null, 'cy', (this.getPosY(cd) + this.tailleCase/2).toString() + "%");
                             cd.setAttribute('class', 'busy '+this.getCurrentColor());
                             cd.appendChild(clone);
-                            console.log("prise2", this.selectedPion);
                             this.caseActive.removeChild(this.selectedPion);
                             this.caseActive.setAttribute('class', 'free');
-                            //on mange le pion saute
-                            console.log("prise2", caseSaute.querySelector('.draggable'));
                             caseSaute.removeChild(caseSaute.querySelector('.draggable'));
-                            caseSaute.setAttribute('class', 'free');
-                            
-                            //la caseFestination devient la case selectionné (après vérification)
+                            caseSaute.setAttribute('class', 'free');                            
+                            //la caseDestination devient la case selectionnée
                             caseDesti = cd;
                             // nécessaire pour l'upgrade en dame
                             this.selectedPion = clone;
@@ -624,9 +595,8 @@ class Game {
                                 elm.dispatchEvent(event);
                             }
                             
-                            
                             this.casePrises = this.calculcaseOptions(this.getCurrentPosRow(caseDesti), this.getCurrentPosCol(caseDesti), this.getCurrentStatus(), this.getCurrentColor()).caseTake;
-                            //Si la prise de pion adverse est possible, elle est OBLIGATOIRE !
+                            //Si la prise de pion adverse est encore possible, elle est OBLIGATOIRE !
                             if(this.casePrises.size == 0){
                                 this.tourJoueur = (this.tourJoueur=="white" ? "black" : "white");
                                 if(this.gameType != "onLine") {
@@ -641,7 +611,7 @@ class Game {
         }
         return caseDesti;
     }
-
+    //Affiche graphiquement le mouvement réalisé par le joueur adverse en ligne
     moveAdverse(detailMove) {
         let caseDepart = document.getElementById(detailMove.anciennePosition);
         let caseArrive = document.getElementById(detailMove.nouvellePosition);
@@ -661,14 +631,12 @@ class Game {
             }
             caseArrive.appendChild(clone);
         }
-        console.log("moveAdverse");
         this.tourJoueur = (this.tourJoueur=="white" ? "black" : "white");
         document.getElementById("damier").style.border = "5px solid "+this.tourJoueur;
         
     }
-
+    //Affiche graphiquement la prise de notre pion réalisée par le joueur adverse en ligne
     priseAdverse(detailMove) {
-        console.log("prise", detailMove)
         let caseDepart = document.getElementById(detailMove.anciennePosition);
         let caseSaute =  document.getElementById(detailMove.prise);
         let caseArrive = document.getElementById(detailMove.nouvellePosition);
@@ -690,7 +658,7 @@ class Game {
             }
             caseArrive.appendChild(clone);
             let casePrises = this.calculcaseOptions(this.getCurrentPosRow(caseArrive), this.getCurrentPosCol(caseArrive), clone.classList[0], clone.classList[1]).caseTake;
-            //Si la prise de pion adverse est possible, elle est OBLIGATOIRE !
+            //Si la prise de pion adverse est possible, elle est OBLIGATOIRE, le joueur adverse doit donc encore jouer
             if(casePrises.size == 0){
                 this.tourJoueur = (this.tourJoueur=="white" ? "black" : "white");
                 document.getElementById("damier").style.border = "5px solid "+this.tourJoueur;
@@ -708,6 +676,7 @@ class Game {
         }
     }
 
+    //test si le pion adverse est devenu une dame :
     upgradePionToDameAdverse(posRow, colorPion, tailleDamier){
         let dame = false;
         if(colorPion == this.couleurJoueur){
@@ -722,85 +691,3 @@ class Game {
          return dame;
      }
 }
-/*
-    makeDraggable(event){
-    var mySvg = event.target;
-    //ajout des listeners à l'élément du DOM clické
-    mySvg.addEventListener('mousedown', startDrag);
-    mySvg.addEventListener('mousemove', drag);
-    mySvg.addEventListener('mouseup', endDrag);
-    mySvg.addEventListener('mouseleave', endDrag);
-
-    //reponsiv mobile
-    mySvg.addEventListener('touchstart', startDrag);
-    mySvg.addEventListener('touchmove', drag);
-    mySvg.addEventListener('touchend', endDrag);
-    mySvg.addEventListener('touchleave', endDrag);
-    mySvg.addEventListener('touchcancel', endDrag);
-
-
-
-    /*
-    //on propage l'event lors du clic le startDrag et declenché sur l'élement du DOM
-    //V2 startDrag hotfix ==> calcul de l'offset au moment du clic
-    //coin supérieur gauche
-    function startDrag(event){
-            //l'élément est-il de classe draggable dans le HTML ?
-            if(event.target.classList.contains('draggable')) {
-                    selectedElement =event.target;
-                    offset = getMousePosition(event);
-                    offset.x -= parseFloat(selectedElement.getAttributeNS(null, "x"));
-                    offset.y -= parseFloat(selectedElement.getAttributeNS(null, "y"));
-
-            }
-    }*/
-
-    //V3 startDrag prise en compte des svg ne possédant pas de coordonnées x, y
-    // prise en compte des transform effectué sur ces svg...
-    //HARD*/
-    /*
-    startDrag(event) {
-        if (event.target.classList.contains('draggable')) {
-
-            selectedElement = event.target;
-            offset = getMousePosition(event);
-
-            // Prendre en compte tout les transforme de l'élément courant
-            var transforms = selectedElement.transform.baseVal;
-
-            // S'assurer que la première transformation et un transform
-            if (transforms.length === 0 || transforms.getItem(0).type !== SVGTransform.SVG_TRANSFORM_TRANSLATE) {
-
-                // Créer un transform qui translate par (0, 0)
-                var translate = mySvg.createSVGTransform();
-                translate.setTranslate(0, 0);
-
-                // mettre la translation en debut de transform List
-                selectedElement.transform.baseVal.insertItemBefore(translate, 0);
-            }
-
-            // Enlever le montant de la translation initiale au offset
-            transform = transforms.getItem(0);
-            offset.x -= transform.matrix.e;
-            offset.y -= transform.matrix.f;
-        }
-    }
-
-    //lorsqu'on à cliqué sur l'élément on commence à déplacer ca position de 0.1 en .1 en suivant
-    //la souris
-    drag(event) {
-
-        if(selectedElement) {
-            console.log("ici");
-            event.preventDefault();
-            var coordonate = getMousePosition(event);
-            transform.setTranslate(coordonate.x - offset.x, coordonate.y - offset.y);
-        }
-    }
-
-    endDrag(event) {
-        selectedElement = null;
-    }
-
-
-*/

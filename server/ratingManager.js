@@ -76,7 +76,7 @@ async function findTheXBestPlayers(x){
     if(x<1){
       return "error ! x can't be <1";
     }
-  
+    console.log(allPlayers.length);
     j = 0 ;  
     while((j!=x)&&(allPlayers.length!=0)){
       iMax = 0 ;
@@ -97,7 +97,7 @@ async function findTheXBestPlayers(x){
       j=j+1;
     }
   
-    let result= [];
+    let result= {};
     result.allPseudos = allPseudos;
     result.allNbOfWins = allNbOfWins;
     result.allRatings = allRatings;

@@ -12,11 +12,10 @@ var gameManagement = require("./gameManagement");
 io.sockets.on('connection', function (socket) {
     console.log('socket connected');
 
-
     socket.on('disconnect', function () {
         if (socket.id in duoID) {
             socket.to(duoID[socket.id]).emit('deconnexionAdversaire');
-            let couleurGagnante = duoPseudo[duoID[socket.id]].couleur;
+            let couleurGagnante = duoPseudo[socket.id].couleur;
             let pseudoWhite;
             let pseudoBlack;
             if (duoPseudo[socket.id].couleur == "white") {
@@ -93,7 +92,6 @@ io.sockets.on('connection', function (socket) {
             pseudoWhite = duoPseudo[duoID[socketID]].pseudo;
             pseudoBlack = duoPseudo[socketID].pseudo;
         } 
-        console.log(pseudoWhite, pseudoBlack);
         db.addAMoveToACurrentGame(pseudoWhite,pseudoBlack, detailPrise.anciennePosition, detailPrise.nouvellePosition);
         socket.to(duoID[socketID]).emit('priseAdverse', {detailPrise: detailInverse});
     });
@@ -114,7 +112,6 @@ io.sockets.on('connection', function (socket) {
     });
     
     socket.on("win", function(dataClient) {
-        console.log(dataClient.couleurGagnante + " ont gagné");
         let pseudoWhite;
         let pseudoBlack;
         if (duoPseudo[dataClient.socketID].couleur == "white") {
@@ -131,39 +128,14 @@ io.sockets.on('connection', function (socket) {
         delete duoID[dataClient.socketID.id];
         socket.emit("win", dataClient.couleurGagnante);
     })
+
+    socket.on("displayScore", function() {
+        ratingManager.findTheXBestPlayers(10).then(function(highScore) {
+            socket.emit("displayScore", highScore);
+        })
+    })
 });
 
 // port défini arbitrairement (28400 pour éviter les conflits avec les ports fréquemment utilisés)
 server.listen(28400);
 
-// TODO à supprimer
-
-async function test(){
-
-    //db.addAPlayer("Corentin","Corentin");
-    //db.addAPlayer("Orlane","Orlane");
-    //db.addAPlayer("Victor", "Victor");
-
-    //allPlayers = await db.findAllPlayers();
-    //console.log("nombre de joueurs dans la db = "+allPlayers.length);
-    //console.log("joueur 2 = "+allPlayers[1].pseudo);
-    //db.updateAPlayerRating("Orlane",2000);
-
-    //db.addAGame("Corentin","Orlane");
-    
-    //db.addAMoveToACurrentGame("Corentin","Orlane","1/1","2/2");
-
-    //db.addAMoveToACurrentGame("Corentin","Orlane", "5/5", "4/4");
-
-    //db.addAWinner("Corentin","Orlane","black");
-
-    //ajout manuel de membres tests
-    /*res = await ratingManager.findTheXBestPlayers(5);
-    i = 0 ;
-    while(i!=res.allPseudos.length){
-        console.log("n°"+(i+1)+" is "+res.allPseudos[i]+" with a rating of "+res.allRatings[i]+" and a nb of win of "+res.allNbOfWins[i]);
-        i=i+1;
-    }*/
-}
-
-test();
