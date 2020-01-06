@@ -59,7 +59,6 @@
 
         <section id="gameType" style="display: none;">
             <button id="onLine">Online</button>
-            <button id="vsIA">vs IA</button>
             <button id="local">local</button>
         </section>
         <section id="displayMessage">
@@ -71,38 +70,38 @@
             </svg>
             <p id="pseudoBas" style="margin-left: 200px;"></p>
         </section>
+        <!-- permet d'afficher le damier en entier sur l'écran (mobile ou ordinateur) -->
         <script>
-            function changeSize() {
-                console.log("slt")
-                console.log(document.getElementById("game").offsetHeight * 0.9)
-                console.log("avant height", document.getElementById("damier").style.height);
-                console.log("avant width", document.getElementById("damier").style.width);
-                if (document.getElementById("game").offsetHeight < document.getElementById("game").offsetWidth) {
-                    document.getElementById("damier").style.height = (document.getElementById("game").offsetHeight * 0.9).toString()+"px";
-                    document.getElementById("damier").style.width = (document.getElementById("game").offsetHeight * 0.9).toString()+"px";
-                }else {
-                    document.getElementById("damier").style.height = (document.getElementById("game").offsetWidth * 0.9).toString()+"px";
-                    document.getElementById("damier").style.width = (document.getElementById("game").offsetWidth * 0.9).toString()+"px";
-                }
-                
-                console.log("après height", document.getElementById("damier").style.height);
-                console.log("après width", document.getElementById("damier").style.width);
-            };
-                
-            changeSize();
-            //window.addEventListener('resize', changeSize());
+            if (document.getElementById("game").offsetHeight < document.getElementById("game").offsetWidth) {
+                document.getElementById("damier").style.height = (document.getElementById("game").offsetHeight * 0.9).toString()+"px";
+                document.getElementById("damier").style.width = (document.getElementById("game").offsetHeight * 0.9).toString()+"px";
+            }else {
+                document.getElementById("damier").style.height = (document.getElementById("game").offsetWidth * 0.9).toString()+"px";
+                document.getElementById("damier").style.width = (document.getElementById("game").offsetWidth * 0.9).toString()+"px";
+            }
         </script>
-        <section id="high-score">
+
+        <button id="displayScore">Afficher le tableau des meilleurs scores</button>
+        <section >
+            <table id="high-score">
+                <thead>
+                    <tr><th>Pseudo</th><th>Victoires</th><th>Elo</th></tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
         </section>
 
         <script type="text/javascript" src="cordova.js"></script>
         <script type="text/javascript" src="js/index.js"></script>
+        
 
         
 
         <!-- lien vers le fichier client socket.io.js du module pour réaliser la communication entre le client et le serveur-->
         <script type="text/javascript" src="js/socket.io.js"></script>
         <script type="text/javascript" src="js/login.js"></script>
+        <script type="text/javascript" src="js/affichage.js"></script>
         <script type="text/javascript" src="js/damier.js"></script>
         <script type="text/javascript" src="js/jeu.js"></script>
 

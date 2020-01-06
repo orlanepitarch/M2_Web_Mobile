@@ -29,6 +29,7 @@ var app = {
     // 'pause', 'resume', etc.
     onDeviceReady: function() {
         var login = new log(); 
+        var affichage = new Affichage();
         var jeu;
         let pseudo;
         // on se connecte sur le port 28400 (notre serveur node) quand le device est pret
@@ -48,10 +49,6 @@ var app = {
         document.getElementById("onLine").onclick = function() {
             socket.emit('nouveau_client', {socketId: socket.id, pseudo: pseudo});
             gameType = "onLine";
-        }
-
-        document.getElementById("vsIA").onclick = function() {
-            
         }
 
         document.getElementById("local").onclick = function() {
@@ -76,6 +73,14 @@ var app = {
             }
             document.getElementById("cancelMatchMaking").style.display = "none";
         }
+
+        document.getElementById("displayScore").onclick = function() {
+            socket.emit("displayScore");
+        }
+
+        socket.on("displayScore", function(data) {
+            affichage.displayScore(data);
+        })
 
         socket.on("mauvaisMDP", function() {
             login.mauvaisMDP();

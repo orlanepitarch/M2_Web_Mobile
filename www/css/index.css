@@ -133,3 +133,14 @@ h1 {
     margin-top: 40px;
     margin-left: 40px;
 }
+
+#high-score * {
+    border: 1px solid black;
+    width: 33%;
+}
+
+#high-score {
+    border-collapse: collapse;
+    width: 40%;
+    display: none;
+}
