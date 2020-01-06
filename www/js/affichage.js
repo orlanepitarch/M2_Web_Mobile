@@ -24,4 +24,14 @@ class Affichage {
             table.appendChild(tr);
         }
     }
+
+    cancelMatchMaking() {
+        document.getElementById('gameType').style.display = "block";
+        if (document.getElementById('displayMessage').childElementCount == 1 ) {
+            if(document.getElementById("waiting") != null) {
+                document.getElementById('displayMessage').removeChild(document.getElementById("waiting"));
+            }
+        }
+        document.getElementById("cancelMatchMaking").style.display = "none";
+    }
 }
