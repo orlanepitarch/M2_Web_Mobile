@@ -76,7 +76,6 @@ async function findTheXBestPlayers(x){
     if(x<1){
       return "error ! x can't be <1";
     }
-    console.log(allPlayers.length);
     j = 0 ;  
     while((j!=x)&&(allPlayers.length!=0)){
       iMax = 0 ;

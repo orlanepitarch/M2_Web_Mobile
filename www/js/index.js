@@ -106,7 +106,7 @@ var app = {
             //permet de retrouver la couleur du joueur en fonction de son pseudo (la couleur est une clef dans data)
             let couleurJoueur;
             for (let color in data) { 
-                if (data.hasOwnProperty(prop)) { 
+                if (data.hasOwnProperty(color)) { 
                     if (data[color] === pseudo) 
                     couleurJoueur = color;
                 } 

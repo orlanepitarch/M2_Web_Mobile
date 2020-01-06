@@ -19,7 +19,7 @@ class Affichage {
             let tdElo = document.createElement("td");
             tdPseudo.innerText = pseudo[i];
             tdVictoire.innerText = victoire[i];
-            tdElo.innerText = elo[i];
+            tdElo.innerText = parseInt(elo[i]);
             tr.append(tdPseudo,tdVictoire,tdElo);
             table.appendChild(tr);
         }

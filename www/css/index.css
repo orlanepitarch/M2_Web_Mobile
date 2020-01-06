@@ -130,7 +130,6 @@ h1 {
 }
 
 #damier{
-    margin-top: 40px;
     margin-left: 40px;
 }
 
@@ -143,4 +142,8 @@ h1 {
     border-collapse: collapse;
     width: 40%;
     display: none;
+}
+
+#sectionScore {
+    margin-top: 10px;
 }
