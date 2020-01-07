@@ -1,27 +1,89 @@
-function inversePositionMove(detailMove, tailleJeu) {
-    let moveAnciennePosition = detailMove.anciennePosition.split("/");
-    let moveNouvellePosition =  detailMove.nouvellePosition.split("/");
+let duoID = {};
+let duoPseudo = {};
+let waitingUser = new Array();
 
-    let anciennePosition = getNewPos(tailleJeu,moveAnciennePosition[0]) + "/" + getNewPos(tailleJeu,moveAnciennePosition[1]);
-    let nouvellePosition = getNewPos(tailleJeu,moveNouvellePosition[0]) + "/" + getNewPos(tailleJeu,moveNouvellePosition[1]);
-    return {anciennePosition: anciennePosition, nouvellePosition: nouvellePosition};
+//renvoie l'id de socket de l'adversaire de l'id de socket du client :
+function getDuoSocketID(socketID) {
+    if(socketID in duoID) {
+        return duoID[socketID];
+    }
 }
 
-function getNewPos(tailleJeu, position) {
-    console.log(parseInt(position));
-    return (tailleJeu-1-parseInt(position)).toString();;
+//renvoie un tableau des pseudos blancs et noirs d'après l'id de socket d'un des clients de la partie :
+function getPseudoWhiteAndBlack(socketID) {
+    let pseudoWhite;
+    let pseudoBlack;
+    if (duoPseudo[socketID].couleur == "white") {
+        pseudoWhite = duoPseudo[socketID].pseudo;
+        pseudoBlack = duoPseudo[duoID[socketID]].pseudo;
+    }else {
+        pseudoWhite = duoPseudo[duoID[socketID]].pseudo;
+        pseudoBlack = duoPseudo[socketID].pseudo;
+    } 
+    return {pseudoWhite: pseudoWhite, pseudoBlack: pseudoBlack};
 }
 
-function inversePositionPrise(detailMove, tailleJeu) {
-    let priseAnciennePosition = detailMove.anciennePosition.split("/");
-    let priseSaute = detailMove.prise.split("/");
-    let priseNouvellePosition =  detailMove.nouvellePosition.split("/");
-
-    let anciennePosition = getNewPos(tailleJeu, priseAnciennePosition[0]) + "/" + getNewPos(tailleJeu, priseAnciennePosition[1]);
-    let prise = getNewPos(tailleJeu, priseSaute[0]) + "/" + getNewPos(tailleJeu, priseSaute[1]);
-    let nouvellePosition =getNewPos(tailleJeu, priseNouvellePosition[0]) + "/" + getNewPos(tailleJeu, priseNouvellePosition[1]);
-    return {anciennePosition: anciennePosition, prise: prise, nouvellePosition: nouvellePosition};
+//renvoie la couleur du joueur ayant l'id de socket donné en paramètre :
+function getCouleur(socketID) {
+    return duoPseudo[socketID].couleur;
 }
 
-exports.inversePositionMove = inversePositionMove;
-exports.inversePositionPrise = inversePositionPrise;
+//modification des listes de parties si un client se déconnecte :
+function decoAdversaire(socketID) {
+    if(socketID in duoID) {
+        waitingUser.push({socketId: duoID[socketID], pseudo: duoPseudo[socketID]});
+        delete duoPseudo[duoID[socketID]];
+        delete duoPseudo[socketID];
+        delete duoID[duoID[socketID]];
+        delete duoID[socketID];
+    } else {
+        waitingUser = waitingUser.filter(function(player){
+            return player.socketId != socketID;
+        });
+    }
+}
+
+//modification des listes d'attentes ou de parties à la connection d'un nouvel utilisateur :
+function newClient(dataClient) {
+    if(waitingUser.length > 0 && waitingUser[0] == undefined) {
+        waitingUser = waitingUser.slice(1);
+    }
+    if(waitingUser.length > 0) {
+        let socketID = dataClient.socketId;
+        let pseudo = dataClient.pseudo;
+        let aLier=waitingUser[0];
+        waitingUser = waitingUser.slice(1);
+        duoID[aLier.socketId] = socketID;
+        duoPseudo[aLier.socketId] = {pseudo: pseudo, couleur: "black"};
+        duoID[socketID] = aLier.socketId;
+        duoPseudo[socketID] =  {pseudo: aLier.pseudo, couleur: "white"};
+        return {white: aLier.pseudo, black: pseudo, socketIDAdverse: aLier.socketId};
+    }
+    else {
+        waitingUser.push({socketId: dataClient.socketId, pseudo: dataClient.pseudo});
+        return "waiting";
+    }
+}
+
+//modification de la liste d'attente si un utilisateur annule son attente de match :
+function cancelMatchMaking(socketID) {
+    waitingUser = waitingUser.filter(function(player){
+        return player.socketId != socketID;
+    });
+}
+
+//modification des listes de parties (is et pseudo) à la victoire d'un nouvel utilisateur :
+function win(socketID) {
+    delete duoPseudo[duoID[socketID]];
+    delete duoPseudo[socketID];
+    delete duoID[duoID[socketID]];
+    delete duoID[socketID];
+}
+
+exports.getDuoSocketID = getDuoSocketID;
+exports.getPseudoWhiteAndBlack = getPseudoWhiteAndBlack;
+exports.getCouleur = getCouleur;
+exports.decoAdversaire = decoAdversaire;
+exports.newClient = newClient;
+exports.cancelMatchMaking = cancelMatchMaking;
+exports.win = win;
