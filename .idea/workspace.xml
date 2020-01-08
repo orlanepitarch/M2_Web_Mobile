@@ -3,8 +3,9 @@
   <component name="ChangeListManager">
     <list default="true" id="5da600a3-12ac-45b3-a8e1-49c671a1719b" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/www/js/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/js/index.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/www/js/jeu.js" beforeDir="false" afterPath="$PROJECT_DIR$/www/js/jeu.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/db/diagnostic.data/metrics.2020-01-07T22-49-12Z-00000" beforeDir="false" afterPath="$PROJECT_DIR$/data/db/diagnostic.data/metrics.2020-01-07T22-49-12Z-00000" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/db/diagnostic.data/metrics.interim" beforeDir="false" afterPath="$PROJECT_DIR$/data/db/diagnostic.data/metrics.interim" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/db/journal/WiredTigerLog.0000000003" beforeDir="false" afterPath="$PROJECT_DIR$/data/db/journal/WiredTigerLog.0000000003" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
