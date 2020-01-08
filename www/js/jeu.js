@@ -6,7 +6,7 @@ class Game {
         makeDraggable();
     }*/
     constructor(gameType, couleurJoueur) {
-        this.selectedPion, this.caseActive, this.caseChoisie
+        this.selectedPion, this.caseActive, this.caseChoisie;
         this.caseOptions = [];
         this.casePrises = new Map();
         this.tailleDamier = 10;
@@ -456,7 +456,7 @@ class Game {
                     }
                 } else {
                     if(posRow == 0){
-                        this.selectedPion.setAttribute('class', 'dame '+this.couleurJoueur+' draggable');
+                        this.selectedPion.setAttribute('class', 'dame white draggable');
                         this.selectedPion.setAttributeNS(null, 'stroke', 'red');
                         this.selectedPion.setAttributeNS(null, 'stroke-width', '4');
                         isUpgradable = true;

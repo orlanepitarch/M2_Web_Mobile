@@ -35,7 +35,7 @@ var app = {
         let gameType="";
      
         // on se connecte sur le port 28400 (notre serveur node) quand le device est pret
-        var socket = io.connect('http://192.168.1.22:28400');
+        var socket = io.connect('http://192.168.1.13:28400');
         //on affiche un damier pour l'esthétisme et montrer que notre plateforme permet de jouer aux dames :
         new Damier(10,"white");
 
