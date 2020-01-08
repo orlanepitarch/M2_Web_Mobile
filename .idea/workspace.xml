@@ -3,9 +3,19 @@
   <component name="ChangeListManager">
     <list default="true" id="5da600a3-12ac-45b3-a8e1-49c671a1719b" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/db/diagnostic.data/metrics.2020-01-07T22-49-12Z-00000" beforeDir="false" afterPath="$PROJECT_DIR$/data/db/diagnostic.data/metrics.2020-01-07T22-49-12Z-00000" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/db/diagnostic.data/metrics.interim" beforeDir="false" afterPath="$PROJECT_DIR$/data/db/diagnostic.data/metrics.interim" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/db/journal/WiredTigerLog.0000000003" beforeDir="false" afterPath="$PROJECT_DIR$/data/db/journal/WiredTigerLog.0000000003" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/WiredTiger" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/WiredTiger.lock" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/WiredTiger.turtle" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/WiredTiger.wt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/WiredTigerLAS.wt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/_mdb_catalog.wt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/collection-0--4339082265851937687.wt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/collection-2--4339082265851937687.wt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/index-1--4339082265851937687.wt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/index-3--4339082265851937687.wt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/mongod.lock" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/sizeStorer.wt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/storage.bson" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -89,6 +99,10 @@
     </option>
   </component>
   <component name="WindowStateProjectService">
+    <state x="525" y="345" width="621" height="416" key="#com.intellij.fileTypes.FileTypeChooser" timestamp="1578495793288">
+      <screen x="67" y="27" width="1853" height="1053" />
+    </state>
+    <state x="525" y="345" width="621" height="416" key="#com.intellij.fileTypes.FileTypeChooser/67.27.1853.1053@67.27.1853.1053" timestamp="1578495793288" />
     <state x="167" y="127" width="886" height="853" key="DiffContextDialog" timestamp="1577808145244">
       <screen x="67" y="27" width="1853" height="1053" />
     </state>
