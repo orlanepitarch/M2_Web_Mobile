@@ -10,7 +10,6 @@ function inversePositionMove(detailMove, tailleJeu) {
 
 //calcul la position dans le bon sens du damier pour un client (necessaire pour les mouvements adverses) :
 function getNewPos(tailleJeu, position) {
-    console.log(parseInt(position));
     return (tailleJeu-1-parseInt(position)).toString();;
 }
 

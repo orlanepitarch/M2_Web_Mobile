@@ -9,9 +9,6 @@ async function connexion(pseudo, mdp) {
     else if (userPromise == "Mauvais mot de passe") {
         return "Mauvais mot de passe";
     }
-    else {
-        console.log("Tout est bon");
-    }
 }
 
 exports.connexion = connexion;
