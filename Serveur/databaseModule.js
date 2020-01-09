@@ -54,10 +54,10 @@ var gameSchema = new mongoose.Schema({
         '8/0', '8/1','8/2','8/3','8/4', '8/5', '8/6', '8/7', '8/8', '8/9',
         '9/0', '9/1','9/2','9/3','9/4', '9/5', '9/6', '9/7', '9/8', '9/9', "-"], required:true}
     ],
-    playerWhite: String, required:true,
-    playerBlack: String, required:true, 
-    state: {type:Number, min:-1, max:2}, required:true,
-    date: {type:Date, default: Date.now}, required:true 
+    playerWhite: {type:String, required: true},
+    playerBlack: {type:String, required: true},
+    state: {type:Number, min:-1, max:2, required:true}, 
+    date: {type:Date, default: Date.now, required:true }
 });
 
 var Game = mongoose.model('Game', gameSchema);
