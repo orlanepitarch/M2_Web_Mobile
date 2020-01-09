@@ -6,7 +6,7 @@ class Game {
         makeDraggable();
     }*/
     constructor(gameType, couleurJoueur) {
-        this.selectedPion, this.caseActive, this.caseChoisie
+        this.selectedPion, this.caseActive, this.caseChoisie;
         this.caseOptions = [];
         this.casePrises = new Map();
         this.tailleDamier = 10;
@@ -107,7 +107,7 @@ class Game {
                     }
                     else {
                         document.getElementById('cancelLocal').style.display = "none";
-                    login.accueil();
+                        login.accueil();
                     }
                 }
                 console.log('win', "black");
@@ -118,7 +118,7 @@ class Game {
                     elm.dispatchEvent(event);
                 }
                 else {
-                     let result = confirm("Partie Terminée : Les Blancs ont gagnés ! Voulez-vous rejouer ?");
+                    let result = confirm("Partie Terminée : Les Blancs ont gagnés ! Voulez-vous rejouer ?");
                     if(result) {
                         new Game("local", "white");
                     }
@@ -456,7 +456,7 @@ class Game {
                     }
                 } else {
                     if(posRow == 0){
-                        this.selectedPion.setAttribute('class', 'dame '+this.couleurJoueur+' draggable');
+                        this.selectedPion.setAttribute('class', 'dame white draggable');
                         this.selectedPion.setAttributeNS(null, 'stroke', 'red');
                         this.selectedPion.setAttributeNS(null, 'stroke-width', '4');
                         isUpgradable = true;
@@ -465,7 +465,7 @@ class Game {
             }
             else {
                 if(posRow == 0){
-                    this.selectedPion.setAttribute('class', 'dame white draggable');
+                    this.selectedPion.setAttribute('class', 'dame '+this.couleurJoueur+' draggable');
                     this.selectedPion.setAttributeNS(null, 'stroke', 'red');
                     this.selectedPion.setAttributeNS(null, 'stroke-width', '4');
                     isUpgradable = true;

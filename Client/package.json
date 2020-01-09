@@ -1,8 +1,8 @@
 {
   "name": "fr.uga.miashs.dames",
-  "displayName": "HelloCordova",
+  "displayName": "JeuDeDame_Client",
   "version": "1.0.0",
-  "description": "A sample Apache Cordova application that responds to the deviceready event.",
+  "description": "Client via cordova pour le jeu de dame.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -10,14 +10,11 @@
   "keywords": [
     "ecosystem:cordova"
   ],
-  "author": "Apache Cordova Team",
+  "author": "Amiel Corentin, Pitarch Orlane, Silvestre Victor",
   "license": "Apache-2.0",
   "dependencies": {
-    "bcryptjs": "^2.4.3",
     "cordova-android": "^8.1.0",
-    "cordova-browser": "^6.0.0",
-    "mongoose": "^5.8.3",
-    "socket.io": "^2.3.0"
+    "cordova-browser": "^6.0.0"
   },
   "devDependencies": {
     "cordova-plugin-whitelist": "^1.3.4"

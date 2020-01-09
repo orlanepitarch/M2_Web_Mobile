@@ -35,16 +35,31 @@ var app = {
         let gameType="";
      
         // on se connecte sur le port 28400 (notre serveur node) quand le device est pret
-        var socket = io.connect('http://192.168.1.22:28400');
+        var socket = io.connect('http://192.168.43.99:28400');
+        
         //on affiche un damier pour l'esthétisme et montrer que notre plateforme permet de jouer aux dames :
         new Damier(10,"white");
+        
 
         //connexion / inscription d'un utilisateur :
         let formulaire = document.getElementById("formConnexion");
         formulaire.onsubmit = function() {
-            pseudo = formulaire.pseudo.value;
-            password = formulaire.mdp.value;
-            socket.emit("login", pseudo, password);
+            if(formulaire.pseudo.value.length > 2 && formulaire.mdp.value.length > 0) {
+                if(document.getElementById('displayMessage').childElementCount > 0 ) {
+                    if (document.getElementById("mauvaiseTailleLogin") != undefined ) {
+                        document.getElementById("displayMessage").removeChild(document.getElementById("mauvaiseTailleLogin"))
+                    } 
+                    if (document.getElementById("mauvaisMDP") != undefined ) {
+                        document.getElementById("displayMessage").removeChild(document.getElementById("mauvaisMDP"))
+                    } 
+                }
+                pseudo = formulaire.pseudo.value;
+                password = formulaire.mdp.value;
+                socket.emit("login", pseudo, password);
+            } else {
+                affichage.mauvaiseTailleLog()
+            }
+            
             //annule le rafraichissement de la page :
             return false;
         };

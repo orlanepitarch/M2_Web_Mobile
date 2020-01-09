@@ -1,3 +1,4 @@
+//permet de renvoyer la position dans le bon sens du damier pour un client (necessaire pour les mouvements adverses) :
 function inversePositionMove(detailMove, tailleJeu) {
     let moveAnciennePosition = detailMove.anciennePosition.split("/");
     let moveNouvellePosition =  detailMove.nouvellePosition.split("/");
@@ -7,11 +8,12 @@ function inversePositionMove(detailMove, tailleJeu) {
     return {anciennePosition: anciennePosition, nouvellePosition: nouvellePosition};
 }
 
+//calcul la position dans le bon sens du damier pour un client (necessaire pour les mouvements adverses) :
 function getNewPos(tailleJeu, position) {
-    console.log(parseInt(position));
     return (tailleJeu-1-parseInt(position)).toString();;
 }
 
+//permet de renvoyer la position dans le bon sens du damier pour un client (necessaire pour les prises faites par l'adversaire) :
 function inversePositionPrise(detailMove, tailleJeu) {
     let priseAnciennePosition = detailMove.anciennePosition.split("/");
     let priseSaute = detailMove.prise.split("/");

@@ -34,4 +34,23 @@ class Affichage {
         }
         document.getElementById("cancelMatchMaking").style.display = "none";
     }
+
+    mauvaiseTailleLog() {
+        if(document.getElementById('displayMessage').childElementCount > 0 ) {
+            if (document.getElementById("mauvaiseTailleLogin") == undefined ) {
+                var p = document.createElement("p");
+                p.id = "mauvaiseTailleLogin"
+                p.innerHTML = "Longueur de pseudo ou mot de passe insuffisante";
+                p.style.color = "red";
+                document.getElementById('displayMessage').appendChild(p);
+            } 
+        } else {
+            var p = document.createElement("p");
+            p.id = "mauvaiseTailleLogin"
+            p.innerHTML = "Longueur de pseudo ou mot de passe insuffisante";
+            p.style.color = "red";
+            document.getElementById('displayMessage').appendChild(p);
+        }
+     
+    }
 }

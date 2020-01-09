@@ -66,7 +66,6 @@ class Damier{
                 caseConteneur.appendChild(caseSvg);
             }
         }
-        console.log("draw damier");
     }
 
     drawPionSvg(){
@@ -120,7 +119,6 @@ class Damier{
                 }
             }
         }
-        console.log("draw pion")
     }
 }
 
