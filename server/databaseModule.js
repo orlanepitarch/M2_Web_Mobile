@@ -19,10 +19,10 @@ db.once('open', function() {});
 /** @type {Player} */
 
 var playerSchema = new mongoose.Schema({
-  pseudo: {type: String, minlength:3, maxlength: 15},
-  rating: {type:Number},
-  password: {type:String},
-  nbWins: {type:Number, default:0, min:0}
+  pseudo: {type: String, minlength:3, maxlength: 15, required:true},
+  rating: {type:Number, required:true},
+  password: {type:String, required:true},
+  nbWins: {type:Number, default:0, min:0, required:true}
 });
 
 var Player = mongoose.model('Player', playerSchema);
@@ -52,12 +52,12 @@ var gameSchema = new mongoose.Schema({
         '6/0', '6/1','6/2','6/3','6/4', '6/5', '6/6', '6/7', '6/8', '6/9',
         '7/0', '7/1','7/2','7/3','7/4', '7/5', '7/6', '7/7', '7/8', '7/9',
         '8/0', '8/1','8/2','8/3','8/4', '8/5', '8/6', '8/7', '8/8', '8/9',
-        '9/0', '9/1','9/2','9/3','9/4', '9/5', '9/6', '9/7', '9/8', '9/9', "-"]}
+        '9/0', '9/1','9/2','9/3','9/4', '9/5', '9/6', '9/7', '9/8', '9/9', "-"], required:true}
     ],
-    playerWhite: String,
-    playerBlack: String,
-    state: {type:Number, min:-1, max:2},
-    date: {type:Date, default: Date.now}
+    playerWhite: String, required:true,
+    playerBlack: String, required:true, 
+    state: {type:Number, min:-1, max:2}, required:true,
+    date: {type:Date, default: Date.now}, required:true 
 });
 
 var Game = mongoose.model('Game', gameSchema);
